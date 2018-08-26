@@ -1,0 +1,165 @@
+---
+layout: post
+title: Create a Paging Scroll View using NSLayoutAnchor and UIStackView
+date: 2017-07-23 23:21:05.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- iOS
+- NSLayoutAnchor
+- Swift
+- UIStackView
+tags:
+- iOS
+- NSLayoutAnchor
+- Swift
+- UIStackView
+meta: {}
+author: 
+---
+<p>Today I wanna show you how to implement a Paging Scroll View programmatically using some cool AutoLayout APIs. You might be asking "Why do this programmatically?". Truth is, you could do a mix of storyboard or completely in storyboard and get the same result.The reason is that in my next tutorial <a href="https://www.joshqn.com/adding-a-parallax-effect-to-a-uiscrollview-using-nslayoutanchor/" target="_blank" rel="noopener">Adding a Parallax Effect to a UIScrollView using NSLayoutAnchor</a> I create a parallax effect with the header and paragraph text that is easier when done all programmatically.  It's also surprisingly simple! Let's get going!</p>
+<p>Before we get started you should grab the starting project <a href="https://github.com/BlogExamples/PagingScrollView/tree/StarterRepo">here on GitHub</a>. You'll also want to take note of the versions I've used to create this project.</p>
+<ul>
+<li>Xcode 8.3.3</li>
+<li>Swift 3.1</li>
+</ul>
+<p>If you have all those things then let's get started. This is what you'll have by the end of this post.</p>
+<p>[caption id="attachment_591" align="aligncenter" width="270"]<a href="https://www.joshqn.com/wp-content/uploads/2017/07/giphy.gif"><img class="wp-image-591 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="Paging Scroll View Gif" width="270" height="480" /></a> Paging Scroll View[/caption]</p>
+<h3>Setup the ScrollView</h3>
+<p>This is where we need to start because this is where all the subviews will go. Open up the project and go into ViewController.swift and scroll down to the setup() method. You should see a comment stating where we'll be doing the setup. Just below the comment, we'll add the following code.</p>
+<pre class="lang:swift decode:true " title="ScrollView Setup">// [1]
+scrollView.translatesAutoresizingMaskIntoConstraints = false
+scrollView.backgroundColor = .black
+scrollView.showsHorizontalScrollIndicator = false
+    
+// [2]
+self.view.addSubview(scrollView)
+NSLayoutConstraint.activate([
+  scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+  scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+  scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+  scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+])
+</pre>
+<ol>
+<li>Here you can see some pretty self-explanatory changes to scrollView. The oddest piece has to do with <em>.translateAutoresizingMaskIntoConstraints </em>and that just tells our scrollView to assume nothing and let us tell it where to go and how to size itself.</li>
+<li>Here I add the scrollView to our ViewController view and use NSLayoutAnchor to perform some AutoLayout magic. If you're unfamiliar with how this works you should go check out my post on <a href="https://www.joshqn.com/getting-started-with-nslayoutanchor-swift-3-1/">Getting Started with NSLayoutAnchor</a> and then head back over.</li>
+</ol>
+<p>If you run the simulator now you'll see a very unimpressive black screen. Let's keep going.</p>
+<h3>Setup the Stackview</h3>
+<p>If you're unfamiliar with UIStackView that's okay. UIStackView was introduced in iOS 9 and provide an incredibly easy way to create basic layouts. You essentially just add objects and it'll do its best to guess how you want them laid out. You'll typically need to tweak a few settings but overall makes for a lot less code than other methods of AutoLayout. You can read up on it<a href="https://developer.apple.com/documentation/uikit/uistackview"> here in Apple's documentation</a>. Add this code below the code we just added.</p>
+<pre class="lang:swift decode:true" title="Setup UIStackView">// [1]
+stackView.translatesAutoresizingMaskIntoConstraints = false
+stackView.distribution = .equalSpacing
+
+// [2]
+scrollView.addSubview(stackView)
+NSLayoutConstraint.activate([
+  stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+  stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+  stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+  stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
+])</pre>
+<ol>
+<li>Here we've made sure again that the stackView will only use our directions to size itself. We've also told it to give <em>.equalSpace </em>when distributing things. That has to do with the subviews it'll be arranging later when we add them.</li>
+<li>We've added the stackView as a subview to our scrollView. The cool thing about all of this is based on the content we add to stackView later our scrollView will dynamically size itself to fit stackView because of these constraints.</li>
+</ol>
+<p>There's one last thing to do before we get to see some amazing scrolling action. We need to add our pageViews to the stackView and set their constraints. I added each view to an array called <strong>views </strong>that will help us avoid repeating code.  Below the part where we initialized all the PageViews we need to add this code.</p>
+<pre class="lang:swift decode:true" title="Adding the views to the StackView">// [1]
+views.forEach { (view) in
+  view.translatesAutoresizingMaskIntoConstraints = false
+  // [2]
+  stackView.addArrangedSubview(view)
+  view.heightAnchor.constraint(equalTo: self.view.heightAnchor).isActive = true
+  view.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+}</pre>
+<ol>
+<li>Calling the method <em>.forEach </em>on the array equivalent to performing a for-in loop on the array. Either will work but I like using this method.</li>
+<li>To add our views to the stackView we need to call <em>.addArrangedSubview </em>and add the view. If you use the vanilla <em>.addSubview </em>you won't get the desired result of the stackView arranging the views for us.</li>
+</ol>
+<p>Build and run the project. Colors! We finally have some scrolling going on. You might've noticed an issue. When we scroll it doesn't snap to one whole page when we quit.</p>
+<p><a href="https://www.joshqn.com/wp-content/uploads/2017/07/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM.png"><img class="aligncenter wp-image-586" src="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM-576x1024.png" alt="" width="270" height="480" /></a></p>
+<p>Luckily, this is a really easy fix. Go back up to where we set up the scrollView and add the following line of code.</p>
+<pre class="lang:swift decode:true" title="Enable Paging">scrollView.isPagingEnabled = true</pre>
+<p>Build and run the project again and the problem should be fixed. We've officially got some nice paging action. We're done with the main feature but it's not polished. To make it a better experience scrolling we should add margins between our views. We'll do that next.</p>
+<h3>Add Margins between the Views</h3>
+<p>Alright, so we need to make three different changes.</p>
+<ol>
+<li>Adjust the scrollView leading and trailing anchors so that they extend an additional 10 points on either side.</li>
+<li>Since we set out stackView anchors equal to the scrollView anchors we need to counter those changes by bringing the stackView anchors in 10 points. This is important because otherwise our views would end over the edges too.</li>
+<li>Tell the stackView to put a 20 point spacing between the views to match the 10 point margin we put around each view.</li>
+</ol>
+<p>The first changes we'll make will be where we set up the scrollView. Jump into the array of NSLayoutConstraints and we'll add a couple constants to extend 10 points to the left and 10 points to the right.</p>
+<pre class="lang:swift decode:true " title="Adding Constants to the Leading and Trailing constraints">NSLayoutConstraint.activate([
+  scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+  // [1]
+  scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: -10),
+  // [2]
+  scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 10),
+  scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+])</pre>
+<ol>
+<li>To move the constraint 10 points to the left we need to subtract 10 points. That's because the coordinate system starts in the top left and extends down and to the right.</li>
+<li>We add 10 points here to move our trailing edge to the right 10 points.</li>
+</ol>
+<p>We need to do the exact opposite to the stackView constraints because we want it to be fully in view the entire time. Take a look at the stackView array of NSLayoutConstraints and see if you can figure out what the changes need to be.</p>
+<pre class="lang:swift decode:true " title="Adjusting the stackView Constraints to offset the scrollView">NSLayoutConstraint.activate([
+  stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+  stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+  stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 10),
+  stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -10)
+])</pre>
+<p>That'll do it for adjusting the constraints. The last thing we need to do is tell the stackView to put 20 points of spacing between our views. It needs to be 20 points because each view gained a 10 point margin meaning that when they're put together it becomes a 20 point gap. Add the following single line of code to where we setup the stackView.</p>
+<pre class="lang:swift decode:true " title="Add this to the stackView setup">stackView.spacing = 20</pre>
+<p>With that last line of code, you can run the project and see the new margins. We've gotten a lot done. There's one last thing that the Paging Scroll view is missing though and that's a page control. You typically see a little indicator at the bottom indicating what page you're on. We'll add that next.</p>
+<h3>Adding a Page Control</h3>
+<p>The starter project included a property called <strong>pageControl </strong>that's ready to setup. Find the comment at the bottom of the <em>setup() </em>method and add this code.</p>
+<pre class="lang:swift decode:true " title="Setup the pageControl">// [1]
+pageControl.translatesAutoresizingMaskIntoConstraints = false
+self.view.addSubview(pageControl)
+pageControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+pageControl.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20).isActive = true
+// [2]
+pageControl.numberOfPages = views.count
+// [3]
+pageControl.addTarget(self, action: #selector(pageControlTapped(sender:)), for: .valueChanged)</pre>
+<ol>
+<li>Adding constraints so the pageControl.</li>
+<li>We set the <em>.numberOfPages </em>property to the views.count so it knows the number of views that will be displayed.</li>
+<li>Here we're connecting an action to the pageControl so we can do something when we tap the control. We haven't added the <em>pageControlTapped</em> function yet so we'll take care of that next.</li>
+</ol>
+<p>You should see an error right now that says <strong>use of unresolved identifier 'pageControlTapped(sender:)'</strong>. That's because we haven't added it yet. Just below the <em>setup() </em>method, we'll add this new method to pacify the error for now.</p>
+<pre class="lang:swift decode:true " title="Add Action for the pageControl">func pageControlTapped(sender: UIPageControl) {
+    print("Tapped")
+}</pre>
+<p>We'll come back to that method shortly. We need to next give our pageControl the ability to calculate what the current page is. We'll do that by setting our ViewController as the UIScrollViewDelegate and using the <em>scrollViewDidScroll </em>method. First, add this line of code to where we set up the scrollView.</p>
+<pre class="lang:swift decode:true " title="Set the ViewController as the delegate">scrollView.delegate = self</pre>
+<p>This means that our ViewController is now the delegate for our scrollView. Next, we'll add an extension and add a few variables to calculate what the current page is depending on our scrollView content offset. Add this code to the bottom of ViewController.swift and outside of the class declaration. Heads up, you'll need to make pageControl public by removing the <strong>private </strong>accessibility from the declaration at the top.</p>
+<pre class="lang:swift decode:true ">extension ViewController: UIScrollViewDelegate {
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let pageWidth = scrollView.bounds.width
+    let pageFraction = scrollView.contentOffset.x/pageWidth
+    
+    pageControl.currentPage = Int((round(pageFraction)))
+  }
+}</pre>
+<p>You can see that we grab the pageWidth of our scrollView and use it to divide the contentOffset on the X axis. The contentOffset is just the distance we've scrolled from the starting point. Imagine the pageWidth is 100 and our contentOffset is 200. That gives us 2 as the outcome meaning the currentPage would be assigned 2. To make sure our current page isn't some crazy floating number we round it and then type cast it to an Int. These calculations will occur every time the scrollView scrolls meaning when we scroll over a half page the pageControl will update to show we're on the next page.</p>
+<p>The last thing we'll do is revisit the <em>pageControlTapped method.</em> When we tap on the pageControl the goal is to animate to the page we've tapped on. Replace the print statement with the following lines of code.</p>
+<pre class="lang:swift decode:true " title="Animate clicks on the pageControl">// [1]
+let pageWidth = scrollView.bounds.width
+let offset = sender.currentPage * Int(pageWidth)
+// [2]
+UIView.animate(withDuration: 0.33, animations: { [weak self] in
+  self?.scrollView.contentOffset.x = CGFloat(offset)
+})</pre>
+<ol>
+<li>Here we've calculated the distance we need to animate to display the page that was tapped on.</li>
+<li>Lastly, we animate using this animation method and closure. To do that we set the scrollView.contentOffset.x equal to the spot we need to be displayed. The wonky "[weak self]" syntax is a capture list I've used to avoid a strong reference cycle.</li>
+</ol>
+<p>With that final piece of code, you're finally done! You should be able to run the project and click on the pageControl to change the currently displayed page. Pretty cool huh? That'll be it for this post. To make it more fun though I'll show you next week how to add a fun parallax effect to really wow users.</p>
+<p>You can grab the complete code <a href="https://github.com/BlogExamples/PagingScrollView">here on GitHub</a>.</p>
+<p>I hope this post was helpful. If you have any comments please feel free to leave them here or give me a shout out on Twitter @josh_qn.</p>
+<p>Thanks again. Auf wiedersehen!</p>

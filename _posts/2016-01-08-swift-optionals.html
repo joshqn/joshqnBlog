@@ -1,0 +1,37 @@
+---
+layout: post
+title: The Option to Use Optionals
+date: 2016-01-08 04:09:48.000000000 -06:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- iOS
+- Learning
+- Swift
+tags:
+- iOS
+- optionals
+- Swift
+meta: {}
+author: 
+---
+<p>Whether you were new to programming or a veteran the introduction of Swift to the world introduced a new concept we now know as optionals. As not only a new comer to Swift but to programming as well I had no idea why optionals made my code "safe." In this post I'll share a few ways I've found optionals useful and to creating a safer and cleaner code base while writing LESS code.</p>
+<p><!--more--></p>
+<p>The usefulness of optionals is not entirely obvious until you start writing larger programs such as your own app (I know that's when I realized it). The reason is that larger programs introduce a complexity that you can't just keep up with in your own head. When you write small pieces of code or functions you know what state something is in or how something is happening exactly! Do yourself a favor and start using optionals everywhere you can! Large applications are like factories with hundreds of cogs moving in sync to create one product. Our assumptions are what create bugs and that's why Apple created optionals to expect the unexpected.</p>
+<p>Here's one simple example. Imagine you've made a request to a remote server about a users current weather and you have an array of acceptable weathers you're ready to display for them.</p>
+<p>https://gist.github.com/b5a65b419327b1313fb9</p>
+<p>Next you create a function that takes the returned String from the request and searches to see if it matches any of the acceptable weather your app is ready to handle.</p>
+<p>https://gist.github.com/ec2480e83215598d4253</p>
+<p>The request is returned and after searching your array of acceptable weathers there's no match! This could be due to a down server, no reception, or possibly more weather types than you have support for. But your hand is forced and you must return " " or possibly an "Unknown." That may seem minor but that returned value is important to other functions that need to know the current weather so you're left translating to them what this "Unknown" value is and how to handle it. A better way to handle this would be with the already available optional system.</p>
+<p>https://gist.github.com/joshqn/7b40cc0917dcc47a2630</p>
+<p>You can see above I didn't have to rewrite much. I tacked on a "?" to the end of my return type and set "nil" as the return type if there was no match found. This allows for easy translation and logic. When I write "String?" I'm telling the compiler I will be returning either a String or nil.</p>
+<p>If that's not easy enough then you'll also love to know Swift has built in features to handle when a return type is nil. One of my favorite ways to handle nil returns is called nil coalescing. You simply write "??" after the function that could return the nil value and then place an alternate value that will take it's place if it does return nil. Below is an example of this.</p>
+<p>https://gist.github.com/joshqn/0318db9b5a1c37014653</p>
+<p>We're passing an empty string to the function and we expect it to return nil since we don't have a weather type that matches. In this case though if we're given a nil value from the function we'll instead assign "Sunny" to current weather (Real users might not appreciate that).</p>
+<p>As you can see passing nil gives me a chance to handle unexpected outcomes easily so that my users don't experience unpleasant crashes.</p>
+<p>When I started programming I read many articles like this explaining the significance of optionals. The power of optionals seems trivial and easy to work around. The truth of the matter is most language features like optionals can be worked around but they're made to save time and headaches. You can bang your head against a wall all day long and get code written (trust me I've done it). But with some practice you'll see that adopting optionals in your Swift code will make programs easier to write and more manageable in the future.</p>
+<p>I'll be expanding on this topic next week with how I use optionals to reuse UITableViews in my apps.</p>
+<p>If you're interested in learning more about Swift and language features like this subscribe and receive my post right to your inbox! I promise to only send stuff worth your time!</p>

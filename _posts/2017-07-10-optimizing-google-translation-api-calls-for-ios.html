@@ -1,0 +1,142 @@
+---
+layout: post
+title: Optimizing Google Translation API calls for iOS
+date: 2017-07-10 14:19:08.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Alamofire
+- API
+- iOS
+- Swift
+tags:
+- Alamofire
+- Swift
+- Translation API
+meta: {}
+author: 
+---
+<p>[x_pullquote cite="Marc Anthony" type="left"]If you do what you love, you'll never work a day in your life.[/x_pullquote]</p>
+<p>Recently, I started working on an app that needed the ability to translate text to different languages. That meant looking and finding the right API. I settled on using the Google Cloud Platform Translation API because of its great documentation and assumed reliability. The catch is that it's not a free service. Google will charge $20 per 1,000,000 characters it translates. That's not too much for such a service but it's not free and as the user base grows so will my cost. Today, I'll show you how I optimized those API calls to hopefully make a living while doing what I love.</p>
+<p>In this post, I'll be taking you through the following steps.</p>
+<ol>
+<li>Setup (If you'd like to follow along)</li>
+<li>Constraints on the Google Translation API</li>
+<li>How I optimized for those constraints</li>
+</ol>
+<h3 style="text-align: center;">Setup</h3>
+<p>Here are the things you need if you'd like to follow along and where you can find them. There's a link to the complete code at the end.</p>
+<h5>Google Translation API Key (Required)</h5>
+<p>You can find the <a href="https://cloud.google.com/translate/docs/">documentation to get started here</a>. If you have questions just leave me a comment and I'll be happy to help you out. :)</p>
+<h5>Xcode 8.3.3 (Required)</h5>
+<p>You'll need to download this from the app store. If you're using it then you'll be using the same version of Swift I'm using which is <strong>Swift 3.1</strong>. You should be able to easily get away with using slightly older versions or even Xcode 9.</p>
+<h5>Alamofire 4.5 (Required)</h5>
+<p>This is the most current version as of this post. If you're unfamiliar with it then you can take a look at the <a href="https://github.com/Alamofire/Alamofire">Alamofire repo here</a>. It'll walk you through several ways to download the library. I'm going to use <a href="https://cocoapods.org/">Cocoapods</a> for dependency management but it's your choice.</p>
+<h5>Paw (Optional)</h5>
+<p>Paw is an HTTP client that can be used to test out APIs. I've found this app to be invaluable when playing around with APIs. It'll even generate Alamofire or NSUrlSession code you can use. You can find their website <a href="https://paw.cloud/">here</a>.</p>
+<h3 style="text-align: center;">Constraints</h3>
+<p>My goal is to minimize the number of characters I pay the Translation API for thus minimizing my cost. In <a href="https://cloud.google.com/translate/pricing?csw=1">Google's documentation for pricing</a>, you'll find that we could potentially be charged for two circumstances that we can optimize for.</p>
+<ol>
+<li>White spaces count as characters</li>
+<li>Empty queries count as one character</li>
+</ol>
+<p>With those in mind, I want to create two constraints on the queries I make to the API.</p>
+<ol>
+<li>Queries will only contain the required amount of spaces.</li>
+<li>Empty translation queries with zero characters or only spaces won't be sent.</li>
+</ol>
+<p>Adding these constraints will maximize the value we can give customers by minimizing wasted characters.</p>
+<h3 style="text-align: center;">Optimizing our API Request</h3>
+<p>To make it easy on anybody following along I've made the code easily testable in a standard playground. You won't need to download Alamofire or need an API key for this. At the end, I do have a full fledged project you can download from GitHub with everything working.</p>
+<h5>Extending String</h5>
+<p>All of the optimizations I made are methods tacked onto the String struct using an extension. You can create an extension like this.</p>
+<pre class="lang:swift decode:true" title="String extension">extension String {
+  // Code goes in here
+}</pre>
+<p>These could easily just be methods on a class you create or in the view controller. I went this route because of how clean it is and it means I can use the dot operator on any string to call the methods I add.</p>
+<h5>Removing extra Whitespace</h5>
+<p>The first constraint we made was that all queries should only contain the required amount of white spaces. Here is an example of a possible string somebody might try to have translated.</p>
+<pre class="lang:swift decode:true" title="Excessive Spacing">var someText = "  hello   world   "</pre>
+<p>I'd like to have the consecutive spaces removed and the spacing on the ends removed as well to look more like this.</p>
+<pre class="lang:swift decode:true ">var someText = "hello world"</pre>
+<p>Lucky for us, trimming spaces off the beginning and ends of strings is a built-in function already. We can easily achieve that with this little bit of code.</p>
+<pre class="lang:swift decode:true " title="Trimming spaces off the beginning and end">extension String {
+  func removeExtraWhiteSpaces() -&gt; String {
+    var newString = trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    return newString
+  }
+}</pre>
+<p>That'll take care of spaces on the ends. The next part isn't as easy. To do this we'll take advantage of the fact that strings are just arrays of characters. We can loop through the string checking for consecutive spaces and only add characters we want to our new string.</p>
+<pre class="lang:swift decode:true" title="Remove Extra Spaces (Sorta)">extension String {
+  func removeExtraWhiteSpaces() -&gt; String {
+    // The string we'll return at the end
+    var newString = ""
+    // Loop through the array of characters after it is trimmed
+    for character in trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).characters {
+      
+      if character != " " {
+        // Add the character to our new string to be returned
+        newString.append(character)
+        
+      } else {
+        
+      }
+      
+    }
+    return newString
+  }
+
+}</pre>
+<p>If you run that new method you'll quickly see that it isn't right. We want the extra spaces to be removed not all of them. Our current function will just create one long string of characters meaning our API call will return nothing useful. A better way to do this would be to use some indicator that lets us know when we reached the first space and keep that one.</p>
+<pre class="lang:swift decode:true" title="Remove only extra spaces">extension String {
+  func removeExtraWhiteSpaces() -&gt; String {
+    var newString = ""
+    // Indicates if it's the first space we've seen since the last character
+    var isFirstSpace = true
+    for character in trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).characters {
+      
+      if character != " " {
+        newString.append(character)
+        // New characters will reset our variable
+        isFirstSpace = true
+      } else {
+        // Add the space if it is the first one
+        if isFirstSpace { newString.append(character) }
+        // After we add a space we know the next one can't be the first
+        isFirstSpace = false
+      }
+      
+    }
+    return newString
+  }
+}</pre>
+<p>Beautiful! When we run that method on a string we get a nice new string with extra spaces removed.</p>
+<pre class="lang:swift decode:true ">var stringWithExtraInnerSpaces = "    Hello,     World!   These extra spaces  should    be Removed.     "
+print(stringWithExtraInnerSpaces.removeExtraWhiteSpaces()) //"Hello, World! These extra spaces should be Removed"</pre>
+<p>Alright, now we can rest assured that extra spaces won't be sent for translation. Next, let's make sure empty strings and strings with only spaces can't be sent.</p>
+<h5>Checking for Empty Queries</h5>
+<p>Turns out, String has a handy method already for checking empty strings called <em>isEmpty</em>. Try it though and you'll see it's not exactly what we need.</p>
+<pre class="lang:swift decode:true">var emptyString = ""
+emptyString.isEmpty // true
+
+var stringWithSpaces = "    "
+stringWithSpaces.isEmpty // false</pre>
+<p>It's sorta giving us what we want but not under every condition. The easiest solution I've found is to remove all the spaces and then check if it's empty.</p>
+<pre class="lang:swift decode:true ">var trimmedString = stringWithSpaces.trimmingCharacters(in: .whitespacesAndNewlines)
+trimmedString.isEmpty // true</pre>
+<p>simple right? Since I've made the same call with <em>trimmingCharacters(in: .whitespacesAndNewlines) </em>I'll add an extension that does that without all the boilerplate.</p>
+<pre class="lang:swift decode:true ">extension String {
+  func trim() -&gt; String {
+    return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+  }
+}
+
+var stringWithSpaces = "    "
+stringWithSpaces.trim()
+stringWithSpaces.isEmpty // true</pre>
+<p>You can also make that update in the function <em>removeExtraWhiteSpaces() </em>that we added earlier. With that, we're done adding to our extension. We've created the functionality to check for both of the constraints.</p>
+<p>If you're interested in seeing a fully developed app with network calls and these functions implemented you can check it out <a href="https://github.com/BlogExamples/TranslationAPIOptimization">here on GitHub</a>. Thanks for visiting and reading my post! I enjoy writing helpful content so if you gained anything from reading it please let me know by leaving a comment!</p>
+<p>Thanks again. Auf wiedersehen!</p>

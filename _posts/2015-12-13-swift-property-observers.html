@@ -1,0 +1,61 @@
+---
+layout: post
+title: Swift Property Observers
+date: 2015-12-13 04:52:23.000000000 -06:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Indie
+- Learning
+tags:
+- iOS
+- Property Observers
+- Swift
+meta: {}
+author: 
+---
+<p>They're like a dog that barks when somebody drives by your house in a car or when you go people watching (not that I do that). Of course I'm talking about property observers! We all take them for granted but they contribute to a cleaner code base. Here's a couple way's I've found using property observers makes my code cleaner.</p>
+<p><!--more--></p>
+<p>First of all what are property observers? They're placed in stored properties and observe anytime the property is set and respond to those changes. They're used on stored properties with a few other restrictions such as they don't work on lazy stored properties and it has to be a variable not a constant (I'm sure you can figure out why). There are <em>willSet</em> property observers that get called before the new property is stored and the <em>didSet</em> that gets called immediately after the new property is stored.</p>
+<p>I'm going to assume you're still using the old-fashioned Object-oriented approach when writing your code and that means you collect related things and place them in a class/struct. Property observers make the perfect place to update related information when you set a property.</p>
+<pre class="lang:swift range:0-18 decode:true" title="Property Observers">var highScore = 80
+var scoreImprovement = 0
+
+var score: Int = 0 {
+    willSet {
+        print("The new value is \(newValue)")
+    }
+    didSet {
+        if score &gt; highScore {
+            highScore = score
+        }
+        
+        if score &gt; oldValue {
+            scoreImprovement = score - oldValue
+        }
+    }
+}</pre>
+<p>You might have noticed the words <em>newValue</em> and <em>oldValue</em> used in the property observers above. These are default constant names given to the new value assigned to the property and then the old value of the property after it has been changed. You can change those to whatever you'd like by stating the new name prior to the curly braces inside parentheses.</p>
+<pre class="lang:swift range:1-18 decode:true " title="Property Observers">var highScore = 80
+var scoreImprovement = 0
+
+var score: Int = 0 {
+    willSet (newScore) {
+        print("The new value is \(newScore)")
+    }
+    didSet (previousScore){
+        if score &gt; highScore {
+            highScore = score
+        }
+        
+        if score &gt; previousScore {
+            scoreImprovement = score - previousScore
+        }
+    }
+}</pre>
+<p>I realize at this point I could just use a computed property but these aren't so computationally expensive to have around. The observers are a gimme and make short work of keeping all updates neatly tied up in one spot. The above code was tested inside Xcode 7.2 with a playground.</p>
+<p>Property observers might not revolutionize the way you write code but I've found they're a nice addition to any iOS developers tool kit. They're a light weight way to keep related information in sync and notify anything that should know about a change.</p>
+<p>If you liked this post or found it helpful I'd be grateful if you shared it with others. Anything helps!</p>

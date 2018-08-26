@@ -1,0 +1,138 @@
+---
+layout: post
+title: Adding a Parallax Effect to a UIScrollView using NSLayoutAnchor
+date: 2017-09-17 17:16:31.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- iOS
+- NSLayoutAnchor
+- Swift
+- UIStackView
+tags:
+- iOS
+- NSLayoutAnchor
+- Swift
+- UIScrollView
+meta: {}
+author: 
+---
+<p>One of the most common animations we see nowadays is the parallax effect. You see it on a lot of websites and sprinkled here and there inside of mobile applications. It's hard to put into words why it's so enjoyable but like flies, we're drawn to it. That's why today I'll show you how to implement it programmatically inside of a UIScrollView.</p>
+<p>If you'd like to follow along you can<a href="https://github.com/joshqn/ScrollViewParallax/tree/StartHere"> download the starter project from Github here</a>. This is a continuation of a previous post <a href="https://www.joshqn.com/create-a-paging-scroll-view-using-nslayoutanchor-and-uistackview/">Creating a Paging Scroll View using NSLayoutAnchor and UIStackView</a> so if you'd like to build out the project from scratch just start there.</p>
+<p>The Requirements for this project are...</p>
+<ul>
+<li>Xcode 8.3.3 +</li>
+<li>Swift 3.1 +</li>
+</ul>
+<p>Here's what the project will look like when we're done.</p>
+<p>[caption id="attachment_606" align="aligncenter" width="270"]<a href="https://www.joshqn.com/wp-content/uploads/2017/09/giphy.gif"><img class="wp-image-606 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="UIScrollView Parallax Effect" width="270" height="480" /></a> UIScrollView Parallax Effect[/caption]</p>
+<p>Now that you've hopefully either downloaded the project or built it yourself lets get started!</p>
+<h3>Adding NSLayoutConstraint Variables</h3>
+<p>The first thing we need to do is create two variables. The variables will be used to animate our header and paragraph text on the x-axis. Add these lines of code inside of the PageView class.</p>
+<pre class="lang:swift decode:true ">private var headerCenterXAnchor = NSLayoutConstraint()
+private var paragraphCenterXAnchor = NSLayoutConstraint()</pre>
+<p>Optionally, we could be more specific and set them to <strong>NSLayoutXAxisAnchor</strong>. To make these variables useful we'll set them equal to the headerTextField and paragraphTextView centerXAnchors and then activate them with the other constraints.</p>
+<pre class="lang:swift decode:true " title="Setting and activating our centerXAnchor constraints">// Added these two lines to get a reference to the UI items centerXAnchor constraints
+headerCenterXAnchor = headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+paragraphCenterXAnchor = paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+    
+// Replaced the old constraints with the variable names here to be activated when setup is called
+NSLayoutConstraint.activate([
+  headerCenterXAnchor,
+  headerTextField.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+  paragraphCenterXAnchor,
+  paragraphTextView.topAnchor.constraint(equalTo: headerTextField.bottomAnchor, constant: 20),
+  paragraphTextView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: (2/3))
+])</pre>
+<p>After making the above changes your project should now build and look the exact same as it did before we made the changes. Those were the necessary hooks required to make sure we could animate our UI items. Next, we'll get a little more technical.</p>
+<h3>Crunching the numbers</h3>
+<p>The next place we'll be working is inside of the <strong>ViewController</strong> and more specifically inside of <strong>scrollViewDidScroll</strong>. We initially only used this for our pageControl but it's also the perfect place to update where our header and paragraph text should be while scrolling. We're gonna do a few things inside of this method.</p>
+<ol>
+<li>Create a fraction that we'll use to animate the constant on our centerXAnchor</li>
+<li>Enumerate through all of our views</li>
+<li>Calculate the constant based on the offset of our scrollView</li>
+</ol>
+<p>First, let's add a new constant below pageFraction called <strong>constantFraction</strong>. Set it equal to pageFraction for now.</p>
+<pre class="lang:swift decode:true ">let constantFraction = pageFraction</pre>
+<p>Next, we'll use a for-in loop to get ahold of each individual view inside of our views array. We'll be calling <strong>.enumerated()</strong> on the views array so that we'll also get info about the index of the view we're working with.</p>
+<pre class="lang:swift decode:true">for (index, view) in views.enumerated() {
+    guard let view = view as? PageView else { return }
+    // Calculate constant to update UI items
+}</pre>
+<p>You'll probably be advised by the compiler to remove the private access control on <strong>views </strong>as well so just go ahead and do that. This loop will allow us to animate each view inside of views whenever the scrollView scrolls. You'll also see that I use a guard statement to cast the view and return if it doesn't work.</p>
+<p>The last thing we need to do is calculate the constant to animate the views. This is where we'll make use of the index variable we created using the <strong>enumerated()</strong> method. First, I'll show you the code.</p>
+<pre class="lang:swift decode:true">let constant = pageWidth * (CGFloat(index) - constantFraction)</pre>
+<p>This constant will be updated each time a call to scrollViewDidScroll happens. It's pretty difficult to see why this works. Let me break it down view by view what the initial constant would be and maybe it'll make more sense. Imagine we have 3 views that need their constants calculated...</p>
+<h4>Quick Detour</h4>
+<pre class="lang:swift decode:true">let constantForViewOne = 395.0 * (CGFloat(0) - 0.0) // 0.0
+let constantForViewTwo = 395.0 * (CGFloat(1) - 0.0) // 395.0
+let constantForViewThree = 395.0 * (CGFloat(2) - 0.0) // 790.0
+</pre>
+<p>The above example shows how our index value helps offset each view's constant effectively by an entire screen width. That's important because as we swipe you'll see that the view's UI items come into view at a slightly different rate than the view itself creating the parallax effect that we want. Let's take a look at what those values become when we swipe left and show the second view.</p>
+<pre class="lang:swift decode:true ">let constantForViewOne = 395.0 * (CGFloat(0) - 1.0) // -395.0
+let constantForViewTwo = 395.0 * (CGFloat(1) - 1.0) // 0.0
+let constantForViewThree = 395.0 * (CGFloat(2) - 1.0) // 395.0</pre>
+<p>Swiping left changes the <strong>constantFraction</strong> to 1.0 so that the new constant calculated will be subtracted by an entire screen width leading to our view of the next view's UI items.</p>
+<p>The last thing we need to do is call a method on the view and pass back our constant so that we can update the constraints. We haven't created this method yet so just expect Xcode to complain about that.</p>
+<pre class="lang:swift decode:true ">view.updateViewCenterXAnchor(with: constant)</pre>
+<p>That's it for ViewController. We'll implement <strong>.updateViewCenterXAnchor</strong> in PageView next. If you're curious though this is what my scrollViewDidScroll method looks like now.</p>
+<pre class="lang:swift decode:true">func scrollViewDidScroll(_ scrollView: UIScrollView) {
+  let pageWidth = scrollView.bounds.width
+  let pageFraction = scrollView.contentOffset.x/pageWidth
+  let constantFraction = pageFraction
+    
+  pageControl.currentPage = Int((round(pageFraction)))
+    
+  for (index, view) in views.enumerated() {
+    guard let view = view as? PageView else { return }
+    let constant = pageWidth * (CGFloat(index) - constantFraction)
+    view.updateViewCenterXAnchor(with: constant)
+  }
+}</pre>
+<h3>Updating PageView</h3>
+<p>This is the final stretch! We'll use the constant we just created to animate the centerXAnchor gradually across the screen. To do this we'll implement the method we saw inside of ViewController and then set the variables we created again using our new constant.</p>
+<pre class="lang:swift decode:true ">func updateViewCenterXAnchor(with constant: CGFloat) {
+  headerCenterXAnchor = self.headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+  paragraphCenterXAnchor = self.paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+}</pre>
+<p>This is just a slight variation from the constraint method we used earlier. This one allows us to provide an offset to the anchor we're trying to set. With that in place you should build and run the project to see how far we've come!</p>
+<p>Oops, there's one caveat. We can't just update our constraints. They're currently being used. To update the constraints we need to first set <strong>.isActive</strong> to <em>false</em> on both and then set it back to <em>true</em> after we set them again. I'll first show you the original way I did this and then how I ended up doing it.</p>
+<pre class="lang:swift decode:true">func updateViewCenterXAnchor(with constant: CGFloat) {
+  headerCenterXAnchor.isActive = false
+  headerCenterXAnchor = self.headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+  headerCenterXAnchor.isActive = true
+    
+  paragraphCenterXAnchor.isActive = false
+  paragraphCenterXAnchor = self.paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+  paragraphCenterXAnchor.isActive = true
+}</pre>
+<p>Run the project and you should see some awesome parallax action happening! The above method though could be cleaned up. To clean it up I used property observers on both variables to turn .<strong>isActive</strong> on and off. My new properties looked like this.</p>
+<pre class="lang:swift decode:true ">private var headerCenterXAnchor = NSLayoutConstraint() {
+  willSet {
+    headerCenterXAnchor.isActive = false
+  }
+  didSet {
+    headerCenterXAnchor.isActive = true
+  }
+}
+private var paragraphCenterXAnchor = NSLayoutConstraint() {
+  willSet {
+    paragraphCenterXAnchor.isActive = false
+  }
+  didSet {
+    paragraphCenterXAnchor.isActive = true
+  }
+}</pre>
+<p>Adding these observers will make sure our properties are turned off before being set and turned back on after being set. You can then clean up the <strong>updateViewCenterXAnchor</strong> to look like this.</p>
+<pre class="lang:swift decode:true ">func updateViewCenterXAnchor(with constant: CGFloat) {
+  headerCenterXAnchor = self.headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+  paragraphCenterXAnchor = self.paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
+}</pre>
+<p>Much better! You should be able to run the project and still see our new parallax effect. That's all there is to it. If you'd like to see the completed project you can <a href="https://github.com/joshqn/ScrollViewParallax">get it here on Github</a>. I'm sure you can think of a few improvements and I'd love to hear them but I do have a challenge for you.</p>
+<h3>Challenge</h3>
+<p>Right now the header and paragraph are moving at the same speed across the screen. To up the cool factor of our effect figure out a way to animate them at different speeds.</p>
+<p>If you need help <a href="https://github.com/joshqn/ScrollViewParallax/tree/ChallengeSolution">here's the solution to the challenge on Github</a>.</p>
+<p>That wraps up this post. I hope you enjoyed it and found it helpful. If you found it helpful please leave a comment. If you need help or clarification on any part of the post just leave a comment, email me, or find me on twitter @josh_qn. Thanks again! Auf wiedersehen!</p>

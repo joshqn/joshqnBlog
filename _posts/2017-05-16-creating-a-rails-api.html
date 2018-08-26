@@ -1,0 +1,71 @@
+---
+layout: post
+title: Creating a Rails API
+date: 2017-05-16 20:49:09.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- API
+- Learning
+- Ruby on Rails
+tags: []
+meta: {}
+author: 
+---
+<p>This is the first of many posts I plan to make on writing your very own API using Ruby on Rails. I won't overwhelm you with any great explanation on this first post. My plan is to use the magic of Rails to create a functional API  quickly and then show you how to make a quality and scalable API in the later post.</p>
+<p>The plan for the development of the API will look like this.</p>
+<ol>
+<li>Create a functional API.</li>
+<li><a href="http://www.joshqn.com/rails-api-versioning/">Add versioning</a>.</li>
+<li><a href="http://www.joshqn.com/rails-api-token-authentication/">Add Authentication</a>.</li>
+<li>Create a Swift app to consume the API using <a href="https://github.com/Alamofire/Alamofire">Alamofire</a>.</li>
+</ol>
+<h2>Getting started with Ruby on Rails</h2>
+<p>If you're completely new to Rails and have never installed it that's okay. I won't be covering the process but here are some resources for doing that. I personal use a mac so I can vouch for that site. It was easy to follow and extremely comprehensive. When you're done just return and we'll pick up with creating the API.</p>
+<p><strong>macOS</strong> - http://railsapps.github.io/installrubyonrails-mac.html</p>
+<p><strong>Windows</strong> - http://railsinstaller.org/en</p>
+<p>Now if you've made it this far check that you have <strong>Ruby on Rails 5.0.0+</strong> and <strong>Ruby 2.3.0+</strong>. You might be able to get away with using a lower version of Ruby but Rails 5+ is required for this to work.</p>
+<p>To check your version of rails put <strong>rails -v </strong>into the terminal and put <strong>ruby -v </strong>to check ruby and it'll give you back the version you have installed and are using.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-15-at-1.19.43-PM.png"><img class="aligncenter size-full wp-image-324" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-15-at-1.19.43-PM.png" alt="" width="870" height="202" /></a></p>
+<h2>Create an API using Rails</h2>
+<p>For my API I decided that what the world really needs is easier access to dog park information. You can make yours about something different or follow along with my example. Prepare yourself to be blown away by the magic that is Rails.</p>
+<p>First, navigate to the directory you'd like the project to be in using the terminal. I'll put mine on the Desktop for simplicity. Once there you just need to type this line into the terminal <strong>rails new dogPark-api --api </strong>and that's it.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-15-at-2.52.07-PM.png"><img class="aligncenter size-full wp-image-328" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-15-at-2.52.07-PM.png" alt="" width="888" height="88" /></a></p>
+<p>You've done it! You might've noticed rails creating and loading a lot after you typed in that line. Don't worry about that for now.  Let's navigate to the folder and start our project inside the terminal. When you're inside the project folder just type <strong>bin/rails server</strong>.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-15-at-1.47.35-PM.png"><img class="aligncenter size-full wp-image-326" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-15-at-1.47.35-PM.png" alt="" width="822" height="116" /></a></p>
+<p>Go into your web browser and type <strong>localhost:3000/</strong> and there you have it! Really simple right? It doesn't take a lot of effort to see a working project right in your browser. It's not an API but you might've noticed when we created the project we add <strong>--api </strong>which made sure rails excluded any assets we don't need to manage an api when creating it.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-15-at-1.48.05-PM.png"><img class="aligncenter size-large wp-image-327" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-15-at-1.48.05-PM-1024x583.png" alt="" width="1024" height="583" /></a></p>
+<p>&nbsp;</p>
+<p>We have a working project and we've done hardly any work it feels like right? That's sorta the magic of Rails. In the next section, I'll unfold a little more of Rails magic for you when we add in our dog park resource that will structure the info for our API.</p>
+<h2>Use Scaffolding to create the Controller, Model,...</h2>
+<p>To start this section out I just want you to type in the commands and then I'll give you a little explanation. While still inside the terminal type in <strong>rails generate scaffold DogPark </strong>and hit enter. You should get something that looks like this.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-1.52.24-PM.png"><img class="aligncenter size-full wp-image-333" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-1.52.24-PM.png" alt="" width="994" height="430" /></a></p>
+<p>The above command did a little more Rails voodoo. The eagle-eyed amongst you might notice the command above created a bunch of new files in your project. The ones we're concerned about are in the model's folder and controller folder.</p>
+<h3>Models and Tables</h3>
+<p>The model's folder which is located in the app directory now holds a file called dog_park.rb. When you open that file it'll be empty and that's exactly how it's supposed to look. This is our model object which will represent the dog parks we have in our API.</p>
+<p>Before moving on I wanna point out that the <strong>rails generate </strong><strong>scaffold </strong>command did a lot of things. One thing we didn't add was any attributes to the dog_parks table it created. To add an attribute you follow this outline.</p>
+<blockquote><p>rails generate migration AddNewColumnToMyTable column_name:column_type(string by default)</p></blockquote>
+<p>Since we're adding a single attribute called <em>name</em> our command will be <strong>rails generate migration AddNameToDogParks name:string </strong>and then press enter and you'll see this.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.34.47-PM.png"><img class="aligncenter size-large wp-image-340" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.34.47-PM-1024x89.png" alt="" width="1024" height="89" /></a></p>
+<p>This creates a migration for us which we need to tell the project to execute with the command <strong>bin/rails db:migrate </strong>and that'll add the column to our table.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-2.21.36-PM.png"><img class="aligncenter size-large wp-image-334" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-2.21.36-PM-1024x272.png" alt="" width="1024" height="272" /></a></p>
+<p>We officially have a way to store dog parks in our application with a name and an object to represent them. Awesome! We're well on our way to having something tangible to play with.</p>
+<h3>Controller</h3>
+<p>The last bit of magic I think you'll wanna see is in the <em>app &gt; controllers</em> folder which should have a file called <em>dog_parks_controller.rb</em>.  Inside you'll see a full setup for a CRUD application. All with nice comments above each method in the class.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.13.21-PM.png"><img class="aligncenter size-large wp-image-335" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.13.21-PM-851x1024.png" alt="" width="851" height="1024" /></a></p>
+<p>The exact details aren't important right now but you can see how much Rails gives use for free. Because we specified it's an API we get nice JSON objects when we try to view our API objects. We'll be doing that in the next section after we add our first object to the database.</p>
+<h2>Adding Objects to the Database</h2>
+<p>The last thing I want to show you is how to add things to our API. We'll be doing it from the command line for simplicity for now. Inside the terminal type in <strong>bin/rails console </strong>to open up the rails console. That should look like this.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.17.03-PM.png"><img class="aligncenter size-full wp-image-336" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.17.03-PM.png" alt="" width="802" height="136" /></a></p>
+<p>This is how you can interact with your API via the terminal. To create a new dog park object you can type in <strong>dogPark = DogPark.new </strong>and press enter. This will give us a new object with nil attributes across the board which we'll quickly change. Next, type in <strong>dogPark.name = "Paw Park" </strong>and press enter again.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.21.50-PM.png"><img class="aligncenter size-full wp-image-337" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.21.50-PM.png" alt="" width="958" height="114" /></a></p>
+<p>That updates the name attribute to be "Paw Park" but all the other attributes are still nil. That's because until we save it the id and other attributes are required. To finish we'll type in <strong>dogPark.save </strong>and that'll generate the necessary SQL to insert the new object into our database.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.22.20-PM.png"><img class="aligncenter size-large wp-image-338" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.22.20-PM-1024x120.png" alt="" width="1024" height="120" /></a></p>
+<p>If you've ever typed SQL statements to talk with a database you'll really be able to appreciate how easy that was. With all that work behind us, we can finally see a result from our API. Exit the rails console by pressing <strong>control-d </strong>and then start the rails server. Type <strong>bin/rails server </strong>and open your browsers then go to the <strong>localhost:3000/dog_parks</strong>.</p>
+<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-16-at-3.26.25-PM.png"><img class="aligncenter size-large wp-image-339" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-16-at-3.26.25-PM-1024x86.png" alt="" width="1024" height="86" /></a></p>
+<p>Check it out! There is the object you created and saved to the database. It's formatted in JSON because that's what most clients have come to expect from APIs. It might've felt like a long journey but now you've created a functional API using Rails!</p>
+<p>I hope you enjoyed reading it and found it helpful. If you have any questions please just leave a comment or tweet me @josh_qn and I'll reply back as soon as I can!</p>
+<p>Thanks again! Auf Wiedersehen!</p>

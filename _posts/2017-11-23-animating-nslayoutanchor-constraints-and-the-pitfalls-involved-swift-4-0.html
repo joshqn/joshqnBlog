@@ -1,0 +1,236 @@
+---
+layout: post
+title: Animating NSLayoutAnchor Constraints and the Pitfalls Involved (Swift 4.0)
+date: 2017-11-23 18:17:47.000000000 -06:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta: {}
+author: 
+---
+<p>Correctly laying out an iPhone application sometimes feels like the 20% of a project that takes 80% of your effort/time. That's why when Apple hit us with NSLayoutAnchor in iOS 9 I jumped on the opportunity to make life easier. If you haven't spent time using NSLayoutAnchor check out <a href="https://www.joshqn.com/getting-started-with-nslayoutanchor-swift-4/">Getting Started with NSLayoutAnchor (Swift 4.0)</a> my article real quick and then come back. Today I wanna show you how to animate those constraints and best practices I've come across.</p>
+<h2>Animating NSLayoutAnchor Constraints</h2>
+<pre class="lang:swift decode:true" title="How to animate NSLayoutAnchor constraints">UIView.animate(withDuration: 0.33) {
+  self.view.layoutIfNeeded()
+}</pre>
+<p>Check it out. That's it. When you set new constraints on a view or object you just simply add these three lines of code and BAM you've got an animation. You can use any variation of <em>.animateWithDuration</em> as long as you make sure to call <em>.layoutIfNeeded()</em> inside the animation block on the parent view that holds the view you're wanting to animate.</p>
+<h3>Complete Example</h3>
+<pre class="lang:swift decode:true" title="Complete example of animating NSLayoutAnchor Constraints">import UIKit
+
+class ViewController: UIViewController {
+  
+  // Initialized view we want to animate
+  let viewToAnimate = UIView(frame: .zero)
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Add to the view hierarchy
+    self.view.addSubview(viewToAnimate)
+    
+    viewToAnimate.backgroundColor = .red
+    
+    // ***** [1] *****
+    viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
+    viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
+    viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
+    
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    // ***** [2] *****
+    viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+    viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+    
+    // ***** [3] *****
+    UIView.animate(withDuration: 0.33) {
+      self.view.layoutIfNeeded()
+    }
+    
+  }
+}
+</pre>
+<ol>
+<li>It's important to set some initial constraints such as height and width because we initially gave it a frame with a height equal to zero and a width equal to zero.</li>
+<li>Inside of viewDidAppear, we're telling our view <em>viewToAnimate </em>that it needs to set its <em>centerYAnchor and centerXAnchor </em>equal to its superView's and activate them.</li>
+<li>Here we've created an animation block and given it how long we'd like it to animate. Inside of the block we're telling our ViewController's view to layoutIfNeeded because we've just activated some new constraints and they need to be shown.</li>
+</ol>
+<h2>ERROR: Unable to <span class="s1">simultaneously satisfy constraints.</span></h2>
+<h3><span style="color: #595959;">.translatesAutoresizingMaskIntoConstraints</span></h3>
+<p>What does that even mean "Unable to simultaneously satisfy constraints"? It means you've added some extra constraints that aren't playing nicely with some constraints you previously set (or didn't).  If you ever see this error the <strong>FIRST</strong> thing you should look for is if you wrote this line of code in <em>ViewDidLoad</em>.</p>
+<pre class="lang:swift decode:true">viewToAnimate.translatesAutoresizingMaskIntoConstraints = false</pre>
+<p>It's set to <em>true </em>by default and that means the compiler is trying to help you make constraints but since you decided you'd do it yourself the compiler is confused.</p>
+<h3><span style="color: #595959;">NSLayoutConstraint.deactivate</span></h3>
+<p>If you remembered to do that then my next suggestion is to check if you <em>deactivated</em> your constraints before adding new ones. The view is simply a soldier trying to satisfy all your orders but doesn't know how to all at once.</p>
+<pre class="lang:swift decode:true" title="Deactivate old constraints">import UIKit
+
+class ViewController: UIViewController {
+  
+  // Initialized view we want to animate
+  let viewToAnimate = UIView(frame: .zero)
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Add to the view hierarchy
+    self.view.addSubview(viewToAnimate)
+    
+    viewToAnimate.backgroundColor = .red
+    
+    viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
+    viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
+    viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
+    
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    // ***** [1] *****
+    let viewConstraints = viewToAnimate.constraints
+    
+    // ***** [2] *****
+    NSLayoutConstraint.deactivate(viewConstraints)
+    
+    viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+    viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+    
+    UIView.animate(withDuration: 0.33) {
+      self.view.layoutIfNeeded()
+    }
+    
+  }
+}</pre>
+<ol>
+<li>The class <strong>UIView</strong> has a property called <em>constraints </em>that returns an Array of NSLayoutConstraints currently associated with the view. Here we're creating a constant linked to those constraints.</li>
+<li><strong>NSLayoutConstraint </strong>has a class function called <em>deactivate</em> that accepts an array of NSLayoutConstraints and deactivates them all.</li>
+</ol>
+<h2>Why is my view disappearing?</h2>
+<p>If you've been following along you might've noticed your view is vanishing like all your friends when you ask for a ride. This is where constraints can become a headache. When you deactivated all your views constraints you also deactivated the constraints telling it how wide and tall it is. So how do you tell your view which constraints to keep and get rid of?</p>
+<p>There are a few ways to do this but I'm gonna show you the way I've found to be easiest.</p>
+<pre class="lang:swift decode:true" title="Swapping out conflicting constraints">import UIKit
+
+class ViewController: UIViewController {
+  
+  // Initialized view we want to animate
+  let viewToAnimate = UIView(frame: .zero)
+  
+  // ***** [1] *****
+  var topAnchor: NSLayoutConstraint!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Add to the view hierarchy
+    self.view.addSubview(viewToAnimate)
+    
+    viewToAnimate.backgroundColor = .red
+    
+    viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
+    viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
+    viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
+    viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+    
+    // ***** [2] *****
+    topAnchor = viewToAnimate.topAnchor.constraint(equalTo: self.view.bottomAnchor)
+    topAnchor.isActive = true
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    // ***** [3] *****
+    topAnchor.isActive = false
+    viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+    
+    UIView.animate(withDuration: 0.33, delay: 0.5, options: .curveEaseInOut, animations: {
+      self.view.layoutIfNeeded()
+    }, completion: nil)
+    
+  }
+}</pre>
+<ol>
+<li>Create the variable we'll set equal to <em>viewToAnimate</em>'s topAnchor.</li>
+<li>Set the topAnchor variable we create and then do the normal procedure to activate it.</li>
+<li>Because we have a reference to the topAnchor originally created we can easily deactivate it. If you didn't deactivate the constraint you'd probably still get the desired results but it will be in conflict with the anchor we set just below it and turn on.</li>
+</ol>
+<p>This new example might be a bit confusing because the variable we created <em>topAnchor </em>is of type <strong>NSLayoutConstraint</strong> but we'be been using <strong>NSLayoutAnchors</strong>. The trick is that when creating the constraints we're given back an <strong>NSLayoutConstraint</strong>. The class <strong>NSLayoutAnchor</strong> is syntactic sugar for <strong>NSLayoutConstraint</strong> basically. But to that end, we can grab a reference to the constraint we need to deactivate to animate our view into view. Since we don't just deactivate all of <em>viewToAnimates</em>'s constraints we don't need to worry about it disappearing.</p>
+<h2>One more optimization...</h2>
+<p>Occasionally, you might find yourself needing to activate and deactivate a lot of constraints for the same object a lot. That can lead to repetitive calls to NSLayoutConstraint throughout your code. Here's my little helper variable I like to create if I find myself doing that.</p>
+<pre class="lang:swift decode:true" title="Helper Variable">var activeViewConstraints: [NSLayoutConstraint] = [] {
+  willSet {
+    NSLayoutConstraint.deactivate(activeViewConstraints)
+  }
+  didSet {
+    NSLayoutConstraint.activate(activeViewConstraints)
+  }
+}</pre>
+<p>You can use this variable to automatically deactivate and activate new constraints when you set them to this variable. Using <a href="http://www.joshqn.com/swift-property-observers/">property observer</a> <strong>willSet</strong> to deactivate the old constraints that <em>activeConstraints </em>was holding and then in <strong>didSet</strong> to active the new constraints <em>activeConstraints </em>is set to. With that addition, I can update my previous example to this.</p>
+<pre class="lang:swift decode:true " title="Complete example using the helper variable.">import UIKit
+
+class ViewController: UIViewController {
+  
+  // Initialized view we want to animate
+  let viewToAnimate = UIView(frame: .zero)
+  
+  // ***** [1] *****
+  var activeViewConstraints: [NSLayoutConstraint] = [] {
+    willSet {
+      NSLayoutConstraint.deactivate(activeViewConstraints)
+    }
+    didSet {
+      NSLayoutConstraint.activate(activeViewConstraints)
+    }
+  }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Add to the view hierarchy
+    self.view.addSubview(viewToAnimate)
+    
+    viewToAnimate.backgroundColor = .red
+    
+    viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
+    viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
+    viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
+    
+    // ***** [2] *****
+    activeViewConstraints = [
+      viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+      viewToAnimate.topAnchor.constraint(equalTo: self.view.bottomAnchor)
+    ]
+    
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    // ***** [3] *****
+    activeViewConstraints = [
+      viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+      viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+    ]
+    
+    UIView.animate(withDuration: 0.33, delay: 0.5, options: .curveEaseInOut, animations: {
+      self.view.layoutIfNeeded()
+    }, completion: nil)
+    
+  }
+}</pre>
+<ol>
+<li>Creating a new helper variable called <em>activeViewConstraints </em>that is an array of NSLayoutConstraints.</li>
+<li>Setting the starting constraints on <em>viewToAnimate</em>.</li>
+<li>Setting the new constraints we'd like <em>viewToAnimate </em>to use.</li>
+</ol>
+<p>This can be a very helpful way to reduce some repetitive code. The drawback is you'll wanna include any constraints you might need to animate so it can lead to repetitive code as well when compared to my previous example. Pretty awesome huh? You've got a great way to keep up with your currently active constraints. All I ask is you don't abuse this power ;).</p>
+<h2>Final Product<br />
+<a href="http://www.joshqn.com/wp-content/uploads/2016/05/NSLayoutANchorAnimation.gif"><img class="size-full wp-image-290 alignleft" src="{{ site.baseurl }}/assets/NSLayoutANchorAnimation.gif" alt="NSLayoutANchorAnimation" width="320" height="568" /></a></h2>
+<p>If you'd like to see a complete project here it is on <a href="https://github.com/BlogExamples/animatingNSLayoutAnchorsSwift4.0">GitHub</a> for all to see. Feel free to let me know any improvements you've made when animating constraints.</p>
+<p>If you've read this far thank you very much! I really hope it was worth the read and that you'll share/like/heart and let others know it would be worth their time too! Please leave me a comment, I'd love to talk with anyone who enjoyed this post! Auf wiedersehen!</p>

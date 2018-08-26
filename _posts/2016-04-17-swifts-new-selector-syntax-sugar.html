@@ -1,0 +1,31 @@
+---
+layout: post
+title: 'Swift''s New #selector Syntax Sugar'
+date: 2016-04-17 03:40:03.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- iOS
+- Learning
+- Swift
+tags:
+- selector
+- Swift
+meta: {}
+author: 
+---
+<p>The war between Swift's strongly typed language features and stringly typed parameters took another blow with the release of Swift 2.2. Before Swift 2.2 you'd write code like this</p>
+<p>https://gist.github.com/joshqn/7d2321d5537bcdd9630955154d61a764</p>
+<p>Now I don't disagree that you and I are perfectly capable of coping and pasting the selectors name but that's not the point. Swift is here to help reduce the amount of human error involved with programming. Isn't that why we all love it so much?</p>
+<p>Below you'll see the new way of making selectors. If you write it the old way Swift will suggest to you this new way if you've already created the target function.</p>
+<p>https://gist.github.com/joshqn/9ee5e8bafa0592d0a7e7683f7257a0e1</p>
+<p>It's not going to win any beauty pageants but it's safer because you're actually calling a method on the class. If you were to type in an incorrect function name now you'd get an error before run time. An added bonus is you can avoid the usual copying and pasting to make sure you spelled the name just right!</p>
+<p>I'd like to take this one step further though with an ingenious email I got from Josh Brown over at <a href="http://roadfiresoftware.com/2016/04/avoid-using-class-names-in-swifts-selector/">Roadfire Software</a> about improving the safety even more.</p>
+<p>His suggestion was to remove the class name when calling selectors and just do this.</p>
+<p>https://gist.github.com/joshqn/75875233854da8885c6aae6329a59196</p>
+<p>Why? If you or I is refactoring the spaghetti code we created at 2am and we decide to move it to a child of MyViewController guess what happens? Your code will indeed compile but crash at run time! When you include the class name you are making the assumption you're in the right class.</p>
+<p>With this new method you get a compile time error and avoid the angry customers altogether. If you'd like to read Josh Brown's post check it out <a href="http://roadfiresoftware.com/2016/04/avoid-using-class-names-in-swifts-selector/">here</a> and I'd highly suggest subscribing to his newsletter cause he sends out stuff like this all the time!</p>
+<p>That's it for now but I'm sure we'll see more safety features rolled out in the coming months! Thanks for reading and I hope if you liked it you'll leave me a comment or share with fellow Swifters!</p>

@@ -1,0 +1,38 @@
+---
+layout: post
+title: Create Faster Rails Apps with Redis
+date: 
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories:
+- Heroku
+- Redis
+- Ruby on Rails
+tags: []
+meta: {}
+author: 
+---
+<p>How long are you willing to wait for a website to load? I know that's contingent on what you're waiting on but imagine it's Amazon. According to an <a href="http://www.bbc.com/news/business-37100091">article</a> published last year on BBC half of us are only willing to wait 3 seconds for a shopping website to load. What does that mean for websites we build that aren't established and are trying to gain traction? I'd venture to say most people won't even wait 3 seconds so that begs the question of how do we make faster websites? The simple answer is caching but I'm going to show you how to use the in-memory data store Redis as a solution.</p>
+<p>What is Redis? The first place you can find info is their website <a href="https://redis.io/">redis.io</a>, but for our purposes, it's a caching store. If you go to the website and feel overwhelmed that's exactly what happened to me. The possibilities are vast but we'll keep it simple for this post.</p>
+<h2>What you'll need to Begin</h2>
+<ul>
+<li>Ruby 2.4.0 +</li>
+<li>Rails 5.1.0 +</li>
+<li>homebrew</li>
+<li>Lenix (I'll be using macOS)</li>
+</ul>
+<h2>Installing Redis</h2>
+<p>Using homebrew it's extremely easy to add Redis. Just type the following into the terminal.</p>
+<pre class="theme:terminal lang:sh decode:true " title="Redis Installation">brew install redis
+redis-server</pre>
+<p>That should start up the Redis server in your terminal and you'll see this hopefully.</p>
+<p>*** IMAGE ***</p>
+<p>That's all for installing redis. Next, we'll integrate it into a project.</p>
+<h2>Using Redis</h2>
+<p>Adding Redis to a project starts with adding the right gems. Open up your gemfile and add the following code.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

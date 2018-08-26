@@ -1,0 +1,76 @@
+---
+layout: post
+title: How to Integrate React into Rails using Webpacker
+date: 2017-06-25 22:20:42.000000000 -05:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- React
+- Ruby on Rails
+tags:
+- React
+- Ruby on Rails
+- Webpacker
+meta: {}
+author: 
+---
+<p>If you're a Rails developer then you've heard the Rail's mantra "Convention over Configuration" many times. Some can argue it's a weakness but we've embraced it wholeheartedly. The problem is that sometimes it makes the Rail's framework feel too rigid to adapt new trends. Specifically, interactive UIs built using JavaScript frameworks.</p>
+<p><script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/1040_RC04/embed_loader.js"></script> <script type="text/javascript"> trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"Rails","geo":"","time":"2012-06-24 2017-06-24"},{"keyword":"React","geo":"","time":"2012-06-24 2017-06-24"},{"keyword":"Angular","geo":"","time":"2012-06-24 2017-06-24"}],"category":0,"property":""}, {"exploreQuery":"q=Rails,React,Angular","guestPath":"https://trends.google.com:443/trends/embed/"}); </script></p>
+<p>The popularity of JS frameworks like Angular and React have spiked and outpaced Rails in recent years. Keep in mind that comparing these JS frameworks to Rails is an apples to oranges situation. Rails is a fully featured web framework while Angular and React are just used on the front-end. It's undeniable that they've got their strengths though and people want to take advantage of those features. Luckily, we have the option built in now. Rail's has officially enabled integration with these frameworks with the release of Rails 5.1. In this post, I'll show you how to get started by integrating React using Webpacker.</p>
+<h3>Getting Started</h3>
+<p>Before getting started you'll need the following things...</p>
+<ul>
+<li>Ruby 2.2+</li>
+<li>Rails 5.1+</li>
+<li>Node.js 6.4.0+</li>
+<li>Yarn 0.20.1+</li>
+</ul>
+<p>I'll assume you have the first two installed and just show you how I installed Node and Yarn. I found the easiest solution was to use homebrew since I'm on a Mac. You can check if you have them installed easily by typing...</p>
+<pre class="lang:sh decode:true " title="Check Node Version">Node --version</pre>
+<pre class="lang:sh decode:true " title="Check Yarn version">Yarn --version</pre>
+<p>If those both return results and are above the required versions then you're good to go. Otherwise, use the following homebrew instructions to install them.</p>
+<pre class="lang:sh decode:true " title="Installing Node.js via Homebrew">brew install node</pre>
+<pre class="lang:sh decode:true" title="Install Yarn via Homebrew">brew install yarn</pre>
+<p>After doing that you might need to close the terminal and open it up again. When you've done that and successfully gotten back the versions of Node and Yarn then you can move on.</p>
+<h3>Creating the Rails Project</h3>
+<p>In classic Rails fashion, you'll see it's just as easy as always to create the project with integration built in. Just type in.</p>
+<pre class="lang:sh decode:true " title="Creating a Rails app with React integration">rails new my-project --webpack=react</pre>
+<p>Your project will be created with all the necessary dependencies for you ready to go. Alternatively, webpack offers integration with Angular, Vue, and Elm as well. That's it for setting up the project. We'll render the pre-built <em>hello_react.jsx </em>file next.</p>
+<h3>Rendering React</h3>
+<p>You can make sure your project is working via the rails command <strong>bin/rails server </strong>and get the normal welcome page. To view the <em>hello_react </em>module we'll generate a controller with a single page and then render it on there.</p>
+<pre class="lang:sh decode:true " title="Generating a PagesController">bin/rails generate controller Pages HelloReact</pre>
+<p>This will give us a place to view our <em>hello_react.jsx </em>module. With those built, you'll wanna update the root to render that page.</p>
+<pre class="lang:ruby decode:true " title="routes.rb">root 'Pages#helloReact'</pre>
+<p>Next, you can find our react module inside <strong>app &gt; javascript &gt; packs </strong>and then click on <em>hello_react.jsx. </em>At the top, you'll see we have instructions on how to render the module via a Rails tag. Copy and paste that into the <em>helloReact.html.erb</em> view.</p>
+<pre class="lang:ruby decode:true " title="Rendering the hello_react module">&lt;%= javascript_pack_tag 'hello_react' %&gt;
+</pre>
+<p>Finally, to render the view you'll need to open up a second terminal. I just press <strong>command-t</strong> to open up the second tab. In the first terminal, you'll start the Rails server like normal. In the second terminal, you'll type.</p>
+<pre class="lang:sh decode:true " title="Start the Webpack dev server">./bin/webpack-dev-server</pre>
+<p>This will compile the JavaScript files and if you have it running while making changes it'll auto update your view. When you get both of those running you can visit your website on the <strong>localhost:3000</strong> and you should see this.</p>
+<p>[caption id="attachment_544" align="aligncenter" width="300"]<a href="https://www.joshqn.com/wp-content/uploads/2017/06/1_Screen_Shot_25-06-17.png"><img class="wp-image-544 size-medium" src="{{ site.baseurl }}/assets/1_Screen_Shot_25-06-17-300x75.png" alt="Hello React" width="300" height="75" /></a> Hello React[/caption]</p>
+<p>Simple but admittedly easy right? Rails has made it incredibly easy to get up and running with these JavaScript frameworks in no time! If you'd like we can make it just a little easier and reduce our workflow down to one terminal.</p>
+<p>First, add the foreman gem to your Gemfile.</p>
+<pre class="lang:ruby decode:true " title="Adding the foreman gem">gem 'foreman'</pre>
+<p>After that install the gem through the terminal.</p>
+<pre class="lang:sh decode:true " title="Installing foreman">gem install foreman</pre>
+<p>Lastly, create a <em>Procfile </em>in the top directory of your project. This file will tell foreman how to start your project when we tell it to. You can add the file however you want but I usually do it via the terminal like this.</p>
+<pre class="lang:swift decode:true " title="Creating the Procfile">touch Procfile</pre>
+<p>That'll only work if you're in the highest directory. When you've done that just copy and paste this into the file.</p>
+<p>[x_code]web: bundle exec rails s</p>
+<p>webpacker: ./bin/webpack-dev-server[/x_code]</p>
+<p>With that saved, we can start the whole project with the one command <strong>foreman start</strong>. Just note that the project has changed to <strong>localhost:5000</strong> so you'll no longer be using the traditional 3000 address.</p>
+<h3>Where from here?</h3>
+<p>For me, I'll be spending a lot of time reading up on <a href="https://facebook.github.io/react/">React</a>. I've already been digging through the documentation and it's very thorough. If you'd like to learn more about Webpacker you can checkout the Repo <a href="https://github.com/rails/webpacker#installation">here</a> on GitHub. It also has great documentation and walkthroughs on getting started with all of the integrated JavaScript frameworks.</p>
+<p>Here are the sources I used to create this post if you'd like to go deeper.</p>
+<ul>
+<li>https://webpack.js.org/concepts/</li>
+<li>http://samuelmullen.com/articles/embracing-change-rails51-adopts-yarn-webpack-and-the-js-ecosystem/</li>
+<li>https://medium.com/@hpux/rails-5-1-loves-javascript-a1d84d5318b</li>
+<li>http://edgeguides.rubyonrails.org/5_1_release_notes.html</li>
+</ul>
+<p>I hope this has been helpful! I've really enjoyed using React with Rails and hope you will too! If you have any questions just leave them here or hit up me up twitter @josh_qn.</p>
+<p>Thanks! Auf wiedersehen!</p>
+<p>&nbsp;</p>

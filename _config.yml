@@ -19,8 +19,8 @@ description: >- # this means to ignore newlines until "baseurl:"
   Welcome to my blog! Stay awhile.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+twitter_username: josh_qn
+github_username:  joshqn
 
 permalink: /:title/
 
@@ -36,6 +36,12 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-paginate-v2
+
+pagination:
+  per_page: 8
+  enabled: true
+  sort_reverse: true
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

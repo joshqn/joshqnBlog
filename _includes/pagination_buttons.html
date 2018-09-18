@@ -1,0 +1,27 @@
+  <!--
+  Showing buttons to move to the next and to the previous list of posts (pager buttons).
+  -->
+{% if paginator.total_pages > 1 %}
+<ul class="pager">
+
+  {% unless paginator.previous_page %}
+      {% assign previous-disabled = "not-active" %}
+  {% endunless %}
+
+    <li class="previous">
+        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}"
+        class="{{ previous-disabled }} pagination_buttons" >&larr; Newer Posts</a>
+    </li>
+
+
+    {% unless paginator.next_page %}
+      {% assign next-disabled = "not-active" %}
+    {% endunless %}
+
+    <li class="next">
+        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}"
+        class="pagination_buttons {{ next-disabled }}" >Older Posts &rarr;</a>
+    </li>
+
+</ul>
+{% endif %}

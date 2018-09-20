@@ -45,7 +45,7 @@ pagination:
   sort_reverse: true
 
 collections:
-  categories:
+  category:
     output: true
     permalink: /:collection/:name
 
@@ -53,7 +53,7 @@ defaults:
   -
     scope:
       path: ""
-      type: categories
+      type: category
     values:
       layout: "category"
 

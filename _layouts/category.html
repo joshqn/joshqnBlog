@@ -5,11 +5,12 @@ layout: default
 <div class="blog list">
     <h1>Filed Under <small>#{{ page.tag }}</small></h1>
 
-    {% for category in site.categories %}
-        
-
-        <a href="">{{category}}</a>
-    {% endfor %}
+	<ul>
+		{% for post in site.categories[page.tag] %}
+        	<li>{{post.title}}</li>
+    	{% endfor %}
+	</ul>
+    
 </div>
 
 

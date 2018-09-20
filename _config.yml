@@ -24,6 +24,7 @@ github_username:  joshqn
 
 permalink: /:title/
 
+
 defaults:
   -
     scope:
@@ -39,9 +40,23 @@ plugins:
   - jekyll-paginate-v2
 
 pagination:
-  per_page: 8
+  per_page: 6
   enabled: true
   sort_reverse: true
+
+collections:
+  categories:
+    output: true
+    permalink: /:collection/:name
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: categories
+    values:
+      layout: "category"
+
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -54,3 +69,21 @@ pagination:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

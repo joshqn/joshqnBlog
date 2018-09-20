@@ -42,3 +42,42 @@
    cursor: default;
    color: gray !important;
 }
+
+.categories-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  .category-item {
+    float: left;
+    a {
+      display: block;
+      text-align: center;
+      padding-right: 16px;
+      text-decoration: none;
+    }
+  }
+}
+
+h2 {
+  margin-bottom: 8px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,7 +22,10 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: josh_qn
 github_username:  joshqn
 
-permalink: /:title/
+permalink: :title/
+
+header_pages:
+  - about.html
 
 
 defaults:
@@ -38,24 +41,18 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
+  - jekyll-archives
 
 pagination:
   per_page: 6
   enabled: true
   sort_reverse: true
 
-collections:
-  category:
-    output: true
-    permalink: /:collection/:name
-
-defaults:
-  -
-    scope:
-      path: ""
-      type: category
-    values:
-      layout: "category"
+jekyll-archives:
+  enabled: [categories]
+  layout: 'category'
+  permalinks:
+    category: '/category/:name/'
 
 
 # Exclude from processing.

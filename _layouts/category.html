@@ -2,15 +2,39 @@
 layout: default
 ---
 
-<div class="blog list">
-    <h1>Filed Under <small>#{{ page.tag }}</small></h1>
+<div class="home">
 
-	<ul>
-		{% for post in site.categories[page.tag] %}
-        	<li>{{post.title}}</li>
-    	{% endfor %}
-	</ul>
-    
+ {% if page.title %}
+    <h1 class="page-heading">{{ page.title }}</h1>
+  {% endif %}
+
+  {{ content }}
+
+  <ul class="post-list">
+    <!--
+        Here is the main paginator logic called.
+        All calls to site.posts should be replaced by paginator.posts
+    -->
+    {% for post in page.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+        <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </h2>
+
+        <ul class="categories-list">
+          {% for category in post.categories %}
+            <li class="category-item"><a href="/category/{{category}}">{{ category }}</a></li>
+          {% endfor %}
+        </ul>
+
+      </li>
+    {% endfor %}
+  </ul>
+
+   {%- include pagination_buttons.html -%}
+
+    <!-- <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p> -->
+
 </div>
-
-

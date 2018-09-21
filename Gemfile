@@ -24,6 +24,7 @@ gem "open_uri_redirections"
 group :jekyll_plugins do
   gem "jekyll-paginate-v2"
   gem "jekyll-feed", "~> 0.6"
+  gem 'jekyll-archives'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -7,10 +7,11 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories: []
+categories:
+  - iOS
 tags: []
 meta: {}
-author: 
+author:
 ---
 <p>Correctly laying out an iPhone application sometimes feels like the 20% of a project that takes 80% of your effort/time. That's why when Apple hit us with NSLayoutAnchor in iOS 9 I jumped on the opportunity to make life easier. If you haven't spent time using NSLayoutAnchor check out <a href="https://www.joshqn.com/getting-started-with-nslayoutanchor-swift-4/">Getting Started with NSLayoutAnchor (Swift 4.0)</a> my article real quick and then come back. Today I wanna show you how to animate those constraints and best practices I've come across.</p>
 <h2>Animating NSLayoutAnchor Constraints</h2>
@@ -22,37 +23,37 @@ author:
 <pre class="lang:swift decode:true" title="Complete example of animating NSLayoutAnchor Constraints">import UIKit
 
 class ViewController: UIViewController {
-  
+
   // Initialized view we want to animate
   let viewToAnimate = UIView(frame: .zero)
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     // Add to the view hierarchy
     self.view.addSubview(viewToAnimate)
-    
+
     viewToAnimate.backgroundColor = .red
-    
+
     // ***** [1] *****
     viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
     viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
     viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
-    
+
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
+
     // ***** [2] *****
     viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
     viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-    
+
     // ***** [3] *****
     UIView.animate(withDuration: 0.33) {
       self.view.layoutIfNeeded()
     }
-    
+
   }
 }
 </pre>
@@ -71,40 +72,40 @@ class ViewController: UIViewController {
 <pre class="lang:swift decode:true" title="Deactivate old constraints">import UIKit
 
 class ViewController: UIViewController {
-  
+
   // Initialized view we want to animate
   let viewToAnimate = UIView(frame: .zero)
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     // Add to the view hierarchy
     self.view.addSubview(viewToAnimate)
-    
+
     viewToAnimate.backgroundColor = .red
-    
+
     viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
     viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
     viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
-    
+
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
+
     // ***** [1] *****
     let viewConstraints = viewToAnimate.constraints
-    
+
     // ***** [2] *****
     NSLayoutConstraint.deactivate(viewConstraints)
-    
+
     viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
     viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-    
+
     UIView.animate(withDuration: 0.33) {
       self.view.layoutIfNeeded()
     }
-    
+
   }
 }</pre>
 <ol>
@@ -117,42 +118,42 @@ class ViewController: UIViewController {
 <pre class="lang:swift decode:true" title="Swapping out conflicting constraints">import UIKit
 
 class ViewController: UIViewController {
-  
+
   // Initialized view we want to animate
   let viewToAnimate = UIView(frame: .zero)
-  
+
   // ***** [1] *****
   var topAnchor: NSLayoutConstraint!
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     // Add to the view hierarchy
     self.view.addSubview(viewToAnimate)
-    
+
     viewToAnimate.backgroundColor = .red
-    
+
     viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
     viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
     viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
     viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-    
+
     // ***** [2] *****
     topAnchor = viewToAnimate.topAnchor.constraint(equalTo: self.view.bottomAnchor)
     topAnchor.isActive = true
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
+
     // ***** [3] *****
     topAnchor.isActive = false
     viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-    
+
     UIView.animate(withDuration: 0.33, delay: 0.5, options: .curveEaseInOut, animations: {
       self.view.layoutIfNeeded()
     }, completion: nil)
-    
+
   }
 }</pre>
 <ol>
@@ -175,10 +176,10 @@ class ViewController: UIViewController {
 <pre class="lang:swift decode:true " title="Complete example using the helper variable.">import UIKit
 
 class ViewController: UIViewController {
-  
+
   // Initialized view we want to animate
   let viewToAnimate = UIView(frame: .zero)
-  
+
   // ***** [1] *****
   var activeViewConstraints: [NSLayoutConstraint] = [] {
     willSet {
@@ -191,37 +192,37 @@ class ViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     // Add to the view hierarchy
     self.view.addSubview(viewToAnimate)
-    
+
     viewToAnimate.backgroundColor = .red
-    
+
     viewToAnimate.translatesAutoresizingMaskIntoConstraints = false
     viewToAnimate.heightAnchor.constraint(equalToConstant: 200).isActive = true
     viewToAnimate.widthAnchor.constraint(equalToConstant: 200).isActive = true
-    
+
     // ***** [2] *****
     activeViewConstraints = [
       viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
       viewToAnimate.topAnchor.constraint(equalTo: self.view.bottomAnchor)
     ]
-    
+
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
+
     // ***** [3] *****
     activeViewConstraints = [
       viewToAnimate.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
       viewToAnimate.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
     ]
-    
+
     UIView.animate(withDuration: 0.33, delay: 0.5, options: .curveEaseInOut, animations: {
       self.view.layoutIfNeeded()
     }, completion: nil)
-    
+
   }
 }</pre>
 <ol>

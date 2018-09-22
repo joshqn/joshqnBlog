@@ -44,12 +44,12 @@ plugins:
   - jekyll-archives
 
 pagination:
-  per_page: 2
+  per_page: 5
   enabled: true
   sort_reverse: true
-  trail: 
-    before: 2 # The number of links before the current page
-    after: 2  # The number of links after the current page
+  trail:
+    before: 1 # The number of links before the current page
+    after: 1  # The number of links after the current page
 
 jekyll-archives:
   enabled: [categories]

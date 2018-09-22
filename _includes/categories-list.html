@@ -1,0 +1,16 @@
+{% assign arraySize = post.categories | size %}
+<ul class="categories-list">
+  {% for category in post.categories %}
+    <li class="category-item">
+
+      {% capture category_link %}/category/{{category | replace: " ", "-" | downcase}} {% endcapture %}
+
+      {% if arraySize > 1 and category != post.categories.last %}
+        <a href={{ category_link }}>{{ category }},</a>
+      {% else %}
+         <a href={{ category_link }}>{{ category }}</a>
+      {% endif %}
+     
+    </li>
+  {% endfor %}
+</ul>

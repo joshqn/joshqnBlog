@@ -23,11 +23,7 @@ layout: default
           <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
         </h2>
 
-        <ul class="categories-list">
-          {% for category in post.categories %}
-            <li class="category-item"><a href="/category/{{category}}">{{ category }}</a></li>
-          {% endfor %}
-        </ul>
+       {%- include categories-list.html -%}
 
       </li>
     {% endfor %}

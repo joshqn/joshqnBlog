@@ -19,6 +19,11 @@
         <a href="{{ paginator.first_page_path | prepend: site.baseurl }}" title="{{paginator.first_page.title}}">1</a>
       </li>
 
+      {% assign first = paginator.page_trail | first %}
+      {% if first.num != 1 %}
+        ...
+      {% endif %}
+
       {% for trail in paginator.page_trail %}
 
         {% assign selected = "" %}
@@ -33,6 +38,11 @@
           {% endunless %}
 
       {% endfor %}
+
+      {% assign last = paginator.page_trail | last %}
+      {% if last.num != paginator.total_pages %}
+        ...
+      {% endif %}
 
       <li {% if paginator.page == paginator.total_pages %}class="selected"{% endif %}>
         <a href="{{ paginator.last_page_path | prepend: site.baseurl }}" title="{{paginator.last_page.title}}">{{paginator.total_pages}}</a>  

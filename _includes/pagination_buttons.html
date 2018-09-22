@@ -2,17 +2,56 @@
   Showing buttons to move to the next and to the previous list of posts (pager buttons).
   -->
 {% if paginator.total_pages > 1 %}
-<ul class="pager">
+  <ul class="pager">
 
-  {% unless paginator.previous_page %}
-      {% assign previous-disabled = "not-active" %}
-  {% endunless %}
+    {% unless paginator.previous_page %}
+        {% assign previous-disabled = "not-active" %}
+    {% endunless %}
 
     <li class="previous">
         <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}"
         class="{{ previous-disabled }} pagination_buttons" >&larr; Newer Posts</a>
     </li>
 
+    {% if paginator.page_trail %}
+
+      <li {% if paginator.page == 1 %}class="selected"{% endif %}>
+        <a href="{{ paginator.first_page_path | prepend: site.baseurl }}" title="{{paginator.first_page.title}}">1</a>
+      </li>
+
+      {% assign first = paginator.page_trail | first %}
+      {% if first.num != 1 and first.num != 2%}
+        ...
+      {% endif %}
+
+      {% for trail in paginator.page_trail %}
+
+        {% assign selected = "" %}
+        {% if page.url == trail.path %}
+          {% assign selected = "selected" %}
+        {% endif %}
+
+          {% unless trail.num == 1 or trail.num == paginator.total_pages %}
+            <li class="{{selected}}">
+              <a href="{{ trail.path | prepend: site.baseurl }}" title="{{trail.title}}">{{ trail.num }}</a>
+            </li>
+          {% endunless %}
+
+      {% endfor %}
+
+      {% assign last = paginator.page_trail | last %}
+      {% assign lastNumber = last.num %}
+      {% assign secondLastNumber = paginator.total_pages | minus:1 %}
+
+      {% if lastNumber != paginator.total_pages and lastNumber != secondLastNumber %}
+        ...
+      {% endif %}
+
+      <li {% if paginator.page == paginator.total_pages %}class="selected"{% endif %}>
+        <a href="{{ paginator.last_page_path | prepend: site.baseurl }}" title="{{paginator.last_page.title}}">{{paginator.total_pages}}</a>
+      </li>
+
+    {% endif %}
 
     {% unless paginator.next_page %}
       {% assign next-disabled = "not-active" %}
@@ -23,5 +62,5 @@
         class="pagination_buttons {{ next-disabled }}" >Older Posts &rarr;</a>
     </li>
 
-</ul>
+  </ul>
 {% endif %}

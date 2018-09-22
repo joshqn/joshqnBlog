@@ -47,6 +47,9 @@ pagination:
   per_page: 6
   enabled: true
   sort_reverse: true
+  trail: 
+    before: 2 # The number of links before the current page
+    after: 2  # The number of links after the current page
 
 jekyll-archives:
   enabled: [categories]

@@ -2,17 +2,30 @@
   Showing buttons to move to the next and to the previous list of posts (pager buttons).
   -->
 {% if paginator.total_pages > 1 %}
-<ul class="pager">
+  <ul class="pager">
 
-  {% unless paginator.previous_page %}
-      {% assign previous-disabled = "not-active" %}
-  {% endunless %}
+    {% unless paginator.previous_page %}
+        {% assign previous-disabled = "not-active" %}
+    {% endunless %}
 
     <li class="previous">
         <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}"
         class="{{ previous-disabled }} pagination_buttons" >&larr; Newer Posts</a>
     </li>
 
+    {% if paginator.page_trail %}
+      {% for trail in paginator.page_trail %}
+
+        {% assign selected = "" %}
+        {% if page.url == trail.path %}
+          {% assign selected = "selected" %}
+        {% endif %}
+
+        <li class="{{selected}}">
+            <a href="{{ trail.path | prepend: site.baseurl }}" title="{{trail.title}}">{{ trail.num }}</a>
+        </li>
+      {% endfor %}
+    {% endif %}
 
     {% unless paginator.next_page %}
       {% assign next-disabled = "not-active" %}
@@ -23,5 +36,5 @@
         class="pagination_buttons {{ next-disabled }}" >Older Posts &rarr;</a>
     </li>
 
-</ul>
+  </ul>
 {% endif %}

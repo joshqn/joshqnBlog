@@ -57,6 +57,8 @@ jekyll-archives:
   permalinks:
     category: '/category/:name/'
 
+google_analytics: TRACKING_ID
+
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

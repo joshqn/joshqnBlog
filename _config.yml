@@ -59,6 +59,9 @@ jekyll-archives:
 
 google_analytics: TRACKING_ID
 
+disqus:
+  shortname: DISQUS_SHORTNAME
+
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

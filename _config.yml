@@ -42,6 +42,7 @@ plugins:
   - jekyll-feed
   - jekyll-paginate-v2
   - jekyll-archives
+  - jekyll-gist
 
 pagination:
   per_page: 5

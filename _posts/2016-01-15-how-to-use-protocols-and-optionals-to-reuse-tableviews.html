@@ -17,7 +17,7 @@ tags:
 - optionals
 - Swift
 meta: {}
-author: 
+author:
 ---
 <p>As a developer one of the core concepts I've picked up on is the importance of reusability. You should NEVER write the same line of code twice! Programming is a constant battle against complexity and that means a healthy balance between readability and fewer lines of code! Here I'll show you how I've taken it a step further by reusing a TableView with optionals and protocols.</p>
 <p><!--more--></p>
@@ -28,23 +28,17 @@ author:
 <p><a href="http://www.joshqn.com/wp-content/uploads/2016/01/homeScreen-e1452883949469.png" rel="attachment wp-att-159"><img class="aligncenter wp-image-159 " src="{{ site.baseurl }}/assets/homeScreen-e1452883949469.png" alt="home screen" width="300" height="480" /></a></p>
 <p>Choose your side wisely.</p>
 <p>I chose to represent the sides with structs and each struct conformed to a protocol called ChosenSide. In the protocol I'm careful to set some of the types as optional because I don't want to always set a different value for those.</p>
-<p>https://gist.github.com/joshqn/11bf7bb94b9c7148e4b4</p>
+{% gist 11bf7bb94b9c7148e4b4 %}
 <p>In my view controller I created two optionals.</p>
-<p>https://gist.github.com/joshqn/d98a23731f191382b01c</p>
+{% gist d98a23731f191382b01c %}
 <p>When you click on either button prepareForSegue gets called. Next you let the table view know which side was chosen and initialize the struct. The next step is where protocols make reusing so easy. I simply assign my initialized variable to the table views variable chosenSide. This is possible because both of my "sides" conform to the same type as the variable they're being set to.</p>
-<p>https://gist.github.com/joshqn/a1b7fe0d00e52681f687</p>
+{% gist a1b7fe0d00e52681f687 %}
 <p>Going into great detail about protocols and types will require another post because of how much you can do with them. But in this example I'm using their power to pass around a common type from my view controller to my table view.</p>
 <p>In my tableView's viewDidLoad function I set the title, backgroundColor, and separatorColor with the variable I assigned back in prepareForSegue. I also used nil coalescing to make sure any nil values are still successfully assigned.</p>
-<p>https://gist.github.com/joshqn/7a5528b37d0261a2536e</p>
+{% gist 7a5528b37d0261a2536e %}
 <p>Nil coalescing is one of Swift's built-in features to handle nil values. If the variable I provided to the left of the "??" is nil then the value on the right side is actually set instead. In this case there's a nil value when I choose "TheResistance" and try to get it's backgroundColor. Nil coalescing makes using optionals very safe and here it gives me the desired result of the default table view UI.</p>
 <p>Here is what the end product looks like when I press on "The First Order" or "The Resistance". One table view, two different results.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2016/01/theDarkSide.png" rel="attachment wp-att-160"><img class="wp-image-160 alignleft" src="{{ site.baseurl }}/assets/theDarkSide-640x1024.png" alt="theDarkSide" width="250" height="400" /></a><a href="http://www.joshqn.com/wp-content/uploads/2016/01/theRebellion.png" rel="attachment wp-att-161"><img class="wp-image-161 alignright" src="{{ site.baseurl }}/assets/theRebellion-640x1024.png" alt="theRebellion" width="250" height="400" /></a></p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<p><a href="{{ site.baseurl }}/assets/theDarkSide-640x1024.png" rel="attachment wp-att-160"><img class="wp-image-160 alignleft" src="{{ site.baseurl }}/assets/theDarkSide-640x1024.png" alt="theDarkSide" width="250" height="400" /></a><a href="{ site.baseurl }}/assets/theRebellion-640x1024.png" rel="attachment wp-att-161"><img class="wp-image-161 alignright" src="{{ site.baseurl }}/assets/theRebellion-640x1024.png" alt="theRebellion" width="250" height="400" /></a></p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>A more practical use of this might be when you create a to-do list. Most people create one table view for adding items and another for editing items. That's an ideal situation for reusing a table view because you're adding and editing an object with the same attributes.</p>

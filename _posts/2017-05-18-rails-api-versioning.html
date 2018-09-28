@@ -13,36 +13,36 @@ categories:
 - Ruby on Rails
 tags: []
 meta: {}
-author: 
+author:
 ---
 <p>Versioning? Sounds like something I made up but it's a real thing and you need to care about it say's I! But really, it's something you don't wanna forget about if you want to update your API in the future and not upset your users. Just like applications on your phone and computer, it's common for APIs to receive updates and changes. The problem is that people using your API expect certain results to stay constant and that's not always possible with updates. So to keep your customers happy and their customers happy we need to discuss versioning!</p>
 <p>To begin, if you didn't go through <a href="http://www.joshqn.com/creating-a-rails-api/">Creating a Rails API</a> or didn't keep the code you can clone it from <a href="https://github.com/BlogExamples/dogPark-api/tree/CreatingRailsAPI">Github here</a>.</p>
 <h2>Creating our API Routes</h2>
 <p>To start out we're going to begin in the <span style="color: #c52f24;">routes.rb</span> file which can be found in the <em>config folder</em>. This file is used to recognize URLs and dispatch them to the controller action they correspond to. For instance, when we type into the URL <strong>localhost:3000/dog_parks</strong> our application looks into this file for a matching route. It's sorta odd our application finds a route since nothing in the <span style="color: #c52f24;">routes.rb</span> files even remotely resemble that URL huh?</p>
 <p>The magic is in line 2 <strong>resources :dog_parks</strong>. This single line creates all the common routes we'd need for the CRUD controller we have. If you don't believe me then dive into the terminal, open your project, and type in <strong>bin/rails routes</strong>. You should see this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/Screen-Shot-2017-05-17-at-5.28.57-PM.png"><img class="aligncenter size-full wp-image-360" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-17-at-5.28.57-PM.png" alt="" width="854" height="266" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/Screen-Shot-2017-05-17-at-5.28.57-PM.png"><img class="aligncenter size-full wp-image-360" src="{{ site.baseurl }}/assets/Screen-Shot-2017-05-17-at-5.28.57-PM.png" alt="" width="854" height="266" /></a></p>
 <p>Crazy huh? We get all of that with one line. If we didn't add that single line we would need to add all of this to get the same functionality.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/2_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-352" src="{{ site.baseurl }}/assets/2_Screen_Shot_17-05-17.png" alt="" width="724" height="618" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-352" src="{{ site.baseurl }}/assets/2_Screen_Shot_17-05-17.png" alt="" width="724" height="618" /></a></p>
 <p>If you look at the routes again you'll see the same routes are available but with a lot more code required.</p>
 <p>With that established we can work on our API's versioning. First, we'll add an API namespace to our routes. When you do this look at the routes and see how it has changed.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/3_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-353" src="{{ site.baseurl }}/assets/3_Screen_Shot_17-05-17.png" alt="" width="474" height="258" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/3_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-353" src="{{ site.baseurl }}/assets/3_Screen_Shot_17-05-17.png" alt="" width="474" height="258" /></a></p>
 <p>Next, we can specify more finely the version we'd like to make available to people by adding another namespace called "v1".</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/4_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-354" src="{{ site.baseurl }}/assets/4_Screen_Shot_17-05-17.png" alt="" width="500" height="330" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/4_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-354" src="{{ site.baseurl }}/assets/4_Screen_Shot_17-05-17.png" alt="" width="500" height="330" /></a></p>
 <p>If you run the routes you'll see v1 has been added but if you try and run them you'll get an error. Our <span style="color: #c52f24;">routes.rb</span> file thinks the controller will be placed inside of <strong>app &gt; controllers &gt; api &gt; v1</strong> but we haven't set up that folder structure yet. We'll do that next.</p>
 <h2>Adding the Folder Structure</h2>
 <p>To make sure our controllers are in the right place we'll be adding a few folders and then copying the existing <span style="color: #c52f24;">dog_parks_controller.rb</span> into them. You can create the folders with the terminal like me or manually add them via your text editor.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/5_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-355" src="{{ site.baseurl }}/assets/5_Screen_Shot_17-05-17.png" alt="" width="960" height="94" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/5_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-355" src="{{ site.baseurl }}/assets/5_Screen_Shot_17-05-17.png" alt="" width="960" height="94" /></a></p>
 <p>Then add a new file called <span style="color: #c52f24;">dog_parks_controller.rb</span> and copy the stuff from the original file to this new one. Lastly, it's important you surround your class with these module statements.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/6_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-356" src="{{ site.baseurl }}/assets/6_Screen_Shot_17-05-17.png" alt="" width="396" height="236" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/6_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-356" src="{{ site.baseurl }}/assets/6_Screen_Shot_17-05-17.png" alt="" width="396" height="236" /></a></p>
 <p>When you've done that your class should look like this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/7_Screen_Shot_17-05-17.png"><img class="aligncenter size-large wp-image-357" src="{{ site.baseurl }}/assets/7_Screen_Shot_17-05-17-667x1024.png" alt="" width="667" height="1024" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/7_Screen_Shot_17-05-17-667x1024.png"><img class="aligncenter size-large wp-image-357" src="{{ site.baseurl }}/assets/7_Screen_Shot_17-05-17-667x1024.png" alt="" width="667" height="1024" /></a></p>
 <h2>Using the New Versioned API</h2>
 <p>Easier than you thought right? Now to check out what we've done just go to your browser and type in localhost:3000/api/v1/dog_parks and you'll see the dog parks returned in JSON format.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/8_Screen_Shot_17-05-17.png"><img class="aligncenter size-large wp-image-358" src="{{ site.baseurl }}/assets/8_Screen_Shot_17-05-17-1024x87.png" alt="" width="1024" height="87" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/8_Screen_Shot_17-05-17-1024x87.png"><img class="aligncenter size-large wp-image-358" src="{{ site.baseurl }}/assets/8_Screen_Shot_17-05-17-1024x87.png" alt="" width="1024" height="87" /></a></p>
 <p>If that didn't work. Take a look at my folder structure and make sure it's the same as yours. If it's not exactly the same you might be getting an error. Alternatively, if you didn't put the proper namespace in <span style="color: #c52f24;">routes.rb</span> or name the modules correctly in the <span style="color: #c52f24;">dog_parks_controller.rb</span> file you could be getting other errors.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/9_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-359" src="{{ site.baseurl }}/assets/9_Screen_Shot_17-05-17.png" alt="" width="484" height="406" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/9_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-359" src="{{ site.baseurl }}/assets/9_Screen_Shot_17-05-17.png" alt="" width="484" height="406" /></a></p>
 <p>To add more versions all you'd need to do is create the routes in <span style="color: #c52f24;">routes.rb</span> and then repeat what we did in the api folder for other versions.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/10_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-351" src="{{ site.baseurl }}/assets/10_Screen_Shot_17-05-17.png" alt="" width="510" height="524" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/10_Screen_Shot_17-05-17.png"><img class="aligncenter size-full wp-image-351" src="{{ site.baseurl }}/assets/10_Screen_Shot_17-05-17.png" alt="" width="510" height="524" /></a></p>
 <h2>Other Versioning Methods</h2>
 <p>Like most things in web development, this isn't the only way to achieve versioning in an API. This just happened to be the simplest and easiest way to implement it. This way isn't what you'd call the preferred method but does work. I'll do a more advanced version of this post later and flesh out a more scalable option. The way we've done it in this post has a few shortcomings such as future maintenance issues because we include the version in the URL. In the more advanced post, we'll place the version in the HTTP Accept header.</p>
 <p>I hope you enjoyed this post and found it helpful. Next, I'll be walking you through adding authentication to your API and finally creating an iOS application to consume it.</p>

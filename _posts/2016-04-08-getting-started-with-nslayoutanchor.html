@@ -16,31 +16,31 @@ tags:
 - NSLayoutAnchor
 - Swift
 meta: {}
-author: 
+author:
 ---
-<p>[x_alert heading="New Version Available" type="info"]A newer version of this post is available called <a href="https://wp.me/p6HMD8-81">Getting Started with NSLayoutAnchor (Swift 3.1)</a>[/x_alert]</p>
+<p><strong>A newer version of this post is available called</strong> <a href="https://wp.me/p6HMD8-81">Getting Started with NSLayoutAnchor (Swift 3.1)</a></p>
 <p>One of the most challenge parts of creating any app is figuring out how you're gonna lay out the views on a screen. With the addition of more screen sizes it's not getting any easier but thankfully apple is also offering us more ways to work with auto layout. Here I'm gonna take an introductory look at the new API introduced in iOS 9 NSLayoutAnchor. I'll show you it's improvements over NSLayoutConstraints and how to use them in your app.</p>
 <p>The first thing you probably noticed when looking for ways to create constraints is ALL of the ways to do it! You can use interface builder, stack views, visual format, and last but not least anchors. There's no one perfect way to do this but I'd argue the one with the current best readability is NSLayoutAnchor class. If you're creating constraints in code you'll probably use either NSLayoutConstraints or NSLayoutAnchor so here's what the two look like in code.</p>
-<p>https://gist.github.com/joshqn/a4e9a35a26db750f6b97eab1650aef62</p>
+{% gist a4e9a35a26db750f6b97eab1650aef62 %}
 <p>I start off by creating an array of NSLayoutConstraint so I can activate them all together. More importantly though the LayoutConstraints look like it just drove up in a white van trying to sell homemade candy, it's scary. My Anchors look rather charming though because it's much easier to just see exactly what they're doing.</p>
 <p>Both my set of constraints for NSLayoutConstraint and NSLayoutAnchor above accomplish the exact same task of being constraints.</p>
-<p>[caption id="attachment_262" align="aligncenter" width="375"]<a href="http://www.joshqn.com/wp-content/uploads/2016/04/Simulator-Screen-Shot-Apr-8-2016-6.44.26-AM.png" rel="attachment wp-att-262"><img class="size-full wp-image-262" src="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Apr-8-2016-6.44.26-AM.png" alt="This is what both constraints would do to a layout." width="375" height="667" /></a> This is what both constraints would do to a layout.[/caption]</p>
+<a href="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Apr-8-2016-6.44.26-AM.png" rel="attachment wp-att-262"><img class="size-full wp-image-262" src="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Apr-8-2016-6.44.26-AM.png" alt="This is what both constraints would do to a layout." width="375" height="667" /></a>
 <h2>Readability</h2>
 <p>When you look at each type on constraint which one is more readable to you? Somehow NSLayoutAnchor manages to require less code and do just as much. I can even do better than I did above if I create one little variable.</p>
-<p>https://gist.github.com/joshqn/64acb10a42b906f44d6bf470280e3b0a</p>
+{% gist 64acb10a42b906f44d6bf470280e3b0a %}
 <p>It's an easy fix to already readable code but now it's impossible to not see it's advantages over NSLayoutConstraint. There is one less obvious advantage though.</p>
 <h2>Type Checking</h2>
-<p>https://gist.github.com/joshqn/ba76bb94ac21e2ede369fd14d81dcdbb</p>
+{% gist ba76bb94ac21e2ede369fd14d81dcdbb %}
 <p>In the above code I've clumsily tried anchoring myView's height equal to the super views bottom anchor. I'm getting an error before I even compile saying NSLayoutYAxisAnchor is not the expected type (It's looking for a CGFloat). If I replicated the mistake with NSLayoutConstraint I don't get a warning before I compile</p>
-<p>https://gist.github.com/joshqn/46a3a3b2b71dab517b19bfe1534abdcf</p>
+{% gist 46a3a3b2b71dab517b19bfe1534abdcf %}
 <p>NSLayoutAnchor has three subclasses (<a href="https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSLayoutXAxisAnchor/index.html#//apple_ref/occ/cl/NSLayoutXAxisAnchor" data-renderer-version="2">NSLayoutXAxisAnchor</a>, <a href="https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSLayoutYAxisAnchor/index.html#//apple_ref/occ/cl/NSLayoutYAxisAnchor" data-renderer-version="2">NSLayoutYAxisAnchor</a>,<a href="https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSLayoutDimension_ClassReference/index.html#//apple_ref/occ/cl/NSLayoutDimension" data-renderer-version="2">NSLayoutDimension</a>) that provide some helpful type checking but no additional methods. This will still allow mistakes if you provide a parameter of the same class but it's more helpful than LayoutConstraints are.</p>
 <h2>Creating NSLayoutAnchors</h2>
 <p>First you'll need your object to constrain.</p>
-<p>https://gist.github.com/joshqn/1c6b3dbfc4a459023f2060d177be9121</p>
+{% gist 1c6b3dbfc4a459023f2060d177be9121 %}
 <p>Next, I'll systematically constrain my view using the normal points such as topAnchor, leadingAnchor, trailingAnchor, or bottomAnchor depending on what I'd like to do with my view. There are TONS of other options too such as centerXAnchor, firstBaseLineAnchor, etc...</p>
-<p>https://gist.github.com/joshqn/92c25108a88b28695e00ed2fc5ecf95a</p>
+{% gist 92c25108a88b28695e00ed2fc5ecf95a %}
 <p>I'll then decide how I would like it to be constrained to an object. In the above I used the method constraintEqualToAnchor(_: ) but there's plenty more such as constraintGreaterThanOrEqualToAnchor(_: ), constraintLessThanOrEqualToAnchor(_: ) and a lot more to cover all the possible ways you'd like to constrain your objects.</p>
-<p>https://gist.github.com/joshqn/e2c05244d28ce1b9a78aa52852ca1b1b</p>
+{% gist e2c05244d28ce1b9a78aa52852ca1b1b %}
 <p>Lastly, you'll need to pick another object's anchor such as a super view, another child view, or the layoutGuide and activate it by setting the property 'active' to true.</p>
-<p>https://gist.github.com/joshqn/56dbf18f0d59f51bc4cd14092efa0a4c</p>
+{% gist 56dbf18f0d59f51bc4cd14092efa0a4c %}
 <p>That sums it up for the introduction to NSLayoutAnchor. I'll be diving in deeper to more complicated layouts next week and how to use priorities along with this new API. If this was helpful to you please leave a comment and let me know how share it with a fellow learner! :) Enjoy! Auf wiedersehen!</p>

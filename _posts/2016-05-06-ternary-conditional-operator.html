@@ -17,11 +17,11 @@ tags:
 - Swift
 - TernaryOperator
 meta: {}
-author: 
+author:
 ---
 <p>Getting rid of if-else statements is what the ternary operator was made for. Once you learn about it you'll be tempted to refactor all your code. But where would you look to refactor? I'm gonna take you through a quick example of what that looks like.</p>
 <p>Here's a bit of ugly code that could be improved <strong>A LOT</strong>!</p>
-<p>https://gist.github.com/joshqn/90dccc829b79cf012e5a92e75d0a5559</p>
+{% gist 90dccc829b79cf012e5a92e75d0a5559 %}
 <ol>
 <li>We're generating a random number here that will either be 0 or 1.</li>
 <li>A Bool optional that will allow us to tell our <em>Guest</em> objects whether they're attending or not.</li>
@@ -35,12 +35,12 @@ author:
 <p>There's a lot we could improve but I want to look at <strong>part 3</strong>. In part 3 we have <em>one question</em> with an answer of 'true' or false'. Apples own definition of what a ternary operator is as follows:</p>
 <p>"The <em>ternary conditional operator</em> is a special operator with three parts, which takes the form <code>question ? answer1 : answer2</code>. It is a shortcut for evaluating one of two expressions based on whether <code>question</code> is true or false."</p>
 <p>We'll refactor that single piece of code and then compare the two.</p>
-<p>https://gist.github.com/joshqn/13cb2f582fce690d539fa6889cb06d37</p>
+{% gist 13cb2f582fce690d539fa6889cb06d37 %}
 <p>At first glance you can see it's much shorter. Sometimes that means not as readable but in this case it's much easier to see what's going on. Second, <em>attending</em> is now a constant since I won't be mutating it later and it's not an optional so there's 0% chance of it being nil.</p>
 <p>I'll break down what's happening in that line section by section.</p>
 <p><em>Question</em>: "Is random equal to the int 1" (random == 1)</p>
 <p>Answer 1: If question is <em>true</em> set attending equal to 'true' (? <strong>true</strong> : false)</p>
 <p>Answer 2: if question is <em>false</em> set attending equal to 'false' (? true : <strong>false</strong>)</p>
 <p>There you have it. Maybe a little confusing as first but I hope you can now apply it to the code you write. I did go on to refactor some more of that code to be even shorter and take advantage of more Swifty features.</p>
-<p>https://gist.github.com/joshqn/a70b7ded3b5f9196ce7cfe2a9ddd4c1c</p>
+{% gist a70b7ded3b5f9196ce7cfe2a9ddd4c1c %}
 <p>That's the final product. If you have any questions or improvements of your own tell me about them! I'm eager to here about how others are improving their code so I can improve mine too! Thanks and I hope you'll share/like/email/post or anything else to spread the word, I'd be extremely grateful!</p>

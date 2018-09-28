@@ -17,15 +17,15 @@ tags:
 - iOS
 - NSLayoutAnchor
 meta: {}
-author: 
+author:
 ---
-<p>[x_alert heading="Update to Post" type="info"]This post has been updated for Swift 4.0. You can find it <a href="https://www.joshqn.com/animating-nslayoutanchor-constraints-and-the-pitfalls-involved-swift-4-0/">here</a>[/x_alert]</p>
+<strong>This post has been updated for Swift 4.0. You can find it <a href="https://www.joshqn.com/animating-nslayoutanchor-constraints-and-the-pitfalls-involved-swift-4-0/">here</a></strong>
 <p>Correctly laying out an iPhone application sometimes feels like the 20% of a project that takes 80% of your effort/time. That's why when Apple hit us with NSLayoutAnchor in iOS 9 I jumped on the opportunity to make life easier. If you haven't spent time using NSLayoutAnchor check out my <a href="https://wp.me/p6HMD8-81">Getting Started with NSLayoutAnchor (Swift 3.1)</a> article real quick and then come back. Today I wanna show you how to animate those constraints and best practices I've come across.</p>
 <h2>Animating NSLayoutAnchor Constraints</h2>
-<p>https://gist.github.com/joshqn/8df7174dbf3cfe4143841d898d89adb6</p>
+{% gist 8df7174dbf3cfe4143841d898d89adb6 %}
 <p>Check it out. That's it. When you set new constraints on a view or object you just simply add these three lines of code and BAM you've got an animation. You can use any variation of <em>.animateWithDuration</em> as long as you make sure to call <em>.layoutIfNeeded()</em> inside the animation block on the parent view that holds the view you're wanting to animate.</p>
 <p>Here's a more complete example of what that might look like in an application (This is all done in <em>viewDidLoad</em>).</p>
-<p>https://gist.github.com/joshqn/a0dd08fa4ab1617bb0d9c2d3ce70db36</p>
+{% gist a0dd08fa4ab1617bb0d9c2d3ce70db36 %}
 <ol>
 <li>Create and instantiate a view with constraints for width and height.</li>
 <li>Place constraints needed to animate your view inside an array that holds NSLayoutConstraint as elements.</li>
@@ -35,11 +35,11 @@ author:
 <h2>ERROR: Unable to <span class="s1">simultaneously satisfy constraints.</span></h2>
 <h3><span style="color: #595959;">.translatesAutoresizingMaskIntoConstraints</span></h3>
 <p>What does that even mean "Unable to simultaneously satisfy constraints"? It means you've added some extra constraints that aren't playing nicely with some constraints you previously set (or didn't).  If you ever see this error the <strong>FIRST</strong> thing you should look for is if you wrote this line of code in <em>ViewDidLoad</em>.</p>
-<p>https://gist.github.com/joshqn/71a898f350cdddee31962aed10356003</p>
+{% gist 71a898f350cdddee31962aed10356003 %}
 <p>It's set to <em>true </em>by default and that means the compiler is trying to help you make constraints but since you decided you'd do it yourself the compiler is confused.</p>
 <h3><span style="color: #595959;">.deactivateConstraints</span></h3>
 <p>If you remembered to do that then my next suggestion is to check if you deactivated your constraints before adding new ones. The object is simply a soldier trying to satisfy all your orders but don't expect it to do it all at once.</p>
-<p>https://gist.github.com/joshqn/d1ded79ebd477545fe89fc92f58e3e44</p>
+{% gist d1ded79ebd477545fe89fc92f58e3e44 %}
 <ol>
 <li>Deactivate all constraints on your view using the property <em>.constraints</em> that returns an array of NSLayoutConstraint.</li>
 <li>Activate your constraints.</li>
@@ -48,7 +48,7 @@ author:
 <h2>Why is my view disappearing?</h2>
 <p>If you've been following along you might've noticed your view is vanishing like all your friends when you ask for a ride. This is where constraints can become a headache. When you deactivated all your views constraints you also deactivated the constraints telling it how wide and tall it is. So how do you tell your view which constraints to keep and get rid of?</p>
 <p>There are a few ways to do this but I'm gonna show you the way I've found to be easiest.</p>
-<p>https://gist.github.com/joshqn/498a2ad72cc5879c0bb74883b9bf126c</p>
+{% gist 498a2ad72cc5879c0bb74883b9bf126c %}
 <ol>
 <li>Create the constraints you'd like the view to have when its first drawn.</li>
 <li>Create the constraints for the view to animate to after a certain event happens.</li>
@@ -56,11 +56,11 @@ author:
 <p>In this new example I create and activate the constraints for width and height outside of my array of constraints I want to animate. Next, I create variables to hold an array of NSLayoutConstraint so that I can cherry pick which constraints to add and lose. No more magically disappearing views!</p>
 <h2>One more optimization...</h2>
 <p>It started to bother me how often i was writing <em>NSLayoutConstraint </em>to deactivate and activate constraints in my ViewControllers so I made this handy variable to handle it for me.</p>
-<p>https://gist.github.com/joshqn/7dc71108a91a4c8dfce44a1aa00bea0d</p>
+{% gist 7dc71108a91a4c8dfce44a1aa00bea0d %}
 <p>You can use this variable to automatically deactivate and activate new constraints when you set them to this variable. Using <a href="http://www.joshqn.com/swift-property-observers/">property observer</a> <strong>willSet</strong> to deactivate the old constraints that <em>activeConstraints </em>was holding and then in <strong>didSet</strong> to active the new constraints <em>activeConstraints </em>is set to. With that addition I can update my previous example to this.</p>
-<p>https://gist.github.com/joshqn/60527101150a9426b8577f2e6ed875c7</p>
+{% gist 60527101150a9426b8577f2e6ed875c7 %}
 <p>Pretty awesome huh? You've got a great way to keep up with your currently active constraints and reduced the repetitive code we had before. All I ask is you don't abuse this power ;).</p>
 <h2>Final Product<br />
-<a href="http://www.joshqn.com/wp-content/uploads/2016/05/NSLayoutANchorAnimation.gif"><img class="size-full wp-image-290 alignleft" src="{{ site.baseurl }}/assets/NSLayoutANchorAnimation.gif" alt="NSLayoutANchorAnimation" width="320" height="568" /></a></h2>
+<a href="{{ site.baseurl }}/assets/NSLayoutANchorAnimation.gif"><img class="size-full wp-image-290 alignleft" src="{{ site.baseurl }}/assets/NSLayoutANchorAnimation.gif" alt="NSLayoutANchorAnimation" width="320" height="568" /></a></h2>
 <p>If you'd like to see a complete project here it is on <a href="https://github.com/joshqn/NSLayoutAnchorAnimations">GitHub</a> for all to see. Feel free to let me know any improvements you've made when animating constraints.</p>
 <p>If you've read this far thank you very much! I really hope it was worth the read and that you'll share/like/heart and let others know it would be worth their time too! Please leave me a comment, I'd love to talk with anyone who enjoyed this post! Auf wiedersehen!</p>

@@ -1,105 +1,16 @@
 $category-item-color: #2980b9;
 $pager-anchor-color: #2980b9;
 
-.post-link {
-  color: rgb(0,0,0);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: none;
-    color: rgba(0,0,0,0.5);
-  }
-
-  &:visited {
-    color: gray;
-  }
-}
-
-.pager {
-  width: 70%;
-  margin: auto;
-  text-align: center;;
-  margin-top: 1em;
-  margin-bottom: 1em;
-
-  li {
-    display: inline;
-  }
-
-  a {
-    color: $pager-anchor-color;
-    text-decoration: none;
-
-    &:hover {
-      color: darken($pager-anchor-color, 20%)
-    }
-  }
-
-  .selected a {
-    color: darken($pager-anchor-color, 20%)
-  }
-}
-
-.pagination_buttons {
-    color: rgb(0,122,255);
-    font-weight: 500;
-    padding: 0.375rem 0.75rem;
-    text-decoration: none;
-    &:visited {
-      color: rgb(0,122,255);
-    }
-    &:hover {
-      color: black;
-      text-decoration: none;
-    }
-}
-
 .not-active {
    pointer-events: none;
    cursor: default;
    color: gray !important;
 }
 
-.categories-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  .category-item {
-    float: left;
-    a {
-      display: block;
-      text-align: center;
-      padding-right: 8px;
-      text-decoration: none;
-      font-size: 0.9em;
-      color: $category-item-color;
-
-      &:hover {
-        color: lighten($category-item-color, 10%)
-      }
-    }
-  }
-}
-
 h2 {
   margin-bottom: 8px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.title-break {
+  margin-bottom: 16px;
+}

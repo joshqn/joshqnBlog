@@ -1,0 +1,24 @@
+$category-item-color: #2980b9;
+$pager-anchor-color: #2980b9;
+
+.categories-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  .category-item {
+    float: left;
+    a {
+      display: block;
+      text-align: center;
+      padding-right: 8px;
+      text-decoration: none;
+      font-size: 0.9em;
+      color: $category-item-color;
+
+      &:hover {
+        color: lighten($category-item-color, 10%)
+      }
+    }
+  }
+}

@@ -17,9 +17,9 @@ tags:
 - Swift
 - Translation API
 meta: {}
-author: 
+author:
 ---
-<p>[x_pullquote cite="Marc Anthony" type="left"]If you do what you love, you'll never work a day in your life.[/x_pullquote]</p>
+<p>"If you do what you love, you'll never work a day in your life." - Marc Anthony</p>
 <p>Recently, I started working on an app that needed the ability to translate text to different languages. That meant looking and finding the right API. I settled on using the Google Cloud Platform Translation API because of its great documentation and assumed reliability. The catch is that it's not a free service. Google will charge $20 per 1,000,000 characters it translates. That's not too much for such a service but it's not free and as the user base grows so will my cost. Today, I'll show you how I optimized those API calls to hopefully make a living while doing what I love.</p>
 <p>In this post, I'll be taking you through the following steps.</p>
 <ol>
@@ -76,15 +76,15 @@ author:
     var newString = ""
     // Loop through the array of characters after it is trimmed
     for character in trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).characters {
-      
+
       if character != " " {
         // Add the character to our new string to be returned
         newString.append(character)
-        
+
       } else {
-        
+
       }
-      
+
     }
     return newString
   }
@@ -97,7 +97,7 @@ author:
     // Indicates if it's the first space we've seen since the last character
     var isFirstSpace = true
     for character in trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).characters {
-      
+
       if character != " " {
         newString.append(character)
         // New characters will reset our variable
@@ -108,7 +108,7 @@ author:
         // After we add a space we know the next one can't be the first
         isFirstSpace = false
       }
-      
+
     }
     return newString
   }

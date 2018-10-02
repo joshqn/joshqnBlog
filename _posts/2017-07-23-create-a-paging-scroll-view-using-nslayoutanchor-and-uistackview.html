@@ -18,7 +18,7 @@ tags:
 - Swift
 - UIStackView
 meta: {}
-author: 
+author:
 ---
 <p>Today I wanna show you how to implement a Paging Scroll View programmatically using some cool AutoLayout APIs. You might be asking "Why do this programmatically?". Truth is, you could do a mix of storyboard or completely in storyboard and get the same result.The reason is that in my next tutorial <a href="https://www.joshqn.com/adding-a-parallax-effect-to-a-uiscrollview-using-nslayoutanchor/" target="_blank" rel="noopener">Adding a Parallax Effect to a UIScrollView using NSLayoutAnchor</a> I create a parallax effect with the header and paragraph text that is easier when done all programmatically.  It's also surprisingly simple! Let's get going!</p>
 <p>Before we get started you should grab the starting project <a href="https://github.com/BlogExamples/PagingScrollView/tree/StarterRepo">here on GitHub</a>. You'll also want to take note of the versions I've used to create this project.</p>
@@ -27,14 +27,14 @@ author:
 <li>Swift 3.1</li>
 </ul>
 <p>If you have all those things then let's get started. This is what you'll have by the end of this post.</p>
-<p>[caption id="attachment_591" align="aligncenter" width="270"]<a href="https://www.joshqn.com/wp-content/uploads/2017/07/giphy.gif"><img class="wp-image-591 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="Paging Scroll View Gif" width="270" height="480" /></a> Paging Scroll View[/caption]</p>
+<p><a href="https://www.joshqn.com/wp-content/uploads/2017/07/giphy.gif"><img class="wp-image-591 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="Paging Scroll View Gif" width="270" height="480" /></a></p>
 <h3>Setup the ScrollView</h3>
 <p>This is where we need to start because this is where all the subviews will go. Open up the project and go into ViewController.swift and scroll down to the setup() method. You should see a comment stating where we'll be doing the setup. Just below the comment, we'll add the following code.</p>
 <pre class="lang:swift decode:true " title="ScrollView Setup">// [1]
 scrollView.translatesAutoresizingMaskIntoConstraints = false
 scrollView.backgroundColor = .black
 scrollView.showsHorizontalScrollIndicator = false
-    
+
 // [2]
 self.view.addSubview(scrollView)
 NSLayoutConstraint.activate([
@@ -142,7 +142,7 @@ pageControl.addTarget(self, action: #selector(pageControlTapped(sender:)), for: 
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let pageWidth = scrollView.bounds.width
     let pageFraction = scrollView.contentOffset.x/pageWidth
-    
+
     pageControl.currentPage = Int((round(pageFraction)))
   }
 }</pre>

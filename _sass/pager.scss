@@ -1,0 +1,27 @@
+$category-item-color: #2980b9;
+$pager-anchor-color: #2980b9;
+
+.pager {
+  width: 70%;
+  margin: auto;
+  text-align: center;;
+  margin-top: 1em;
+  margin-bottom: 1em;
+
+  li {
+    display: inline;
+  }
+
+  a {
+    color: $pager-anchor-color;
+    text-decoration: none;
+
+    &:hover {
+      color: darken($pager-anchor-color, 20%)
+    }
+  }
+
+  .selected a {
+    color: darken($pager-anchor-color, 20%)
+  }
+}

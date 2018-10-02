@@ -18,7 +18,7 @@ tags:
 - Swift
 - UIScrollView
 meta: {}
-author: 
+author:
 ---
 <p>One of the most common animations we see nowadays is the parallax effect. You see it on a lot of websites and sprinkled here and there inside of mobile applications. It's hard to put into words why it's so enjoyable but like flies, we're drawn to it. That's why today I'll show you how to implement it programmatically inside of a UIScrollView.</p>
 <p>If you'd like to follow along you can<a href="https://github.com/joshqn/ScrollViewParallax/tree/StartHere"> download the starter project from Github here</a>. This is a continuation of a previous post <a href="https://www.joshqn.com/create-a-paging-scroll-view-using-nslayoutanchor-and-uistackview/">Creating a Paging Scroll View using NSLayoutAnchor and UIStackView</a> so if you'd like to build out the project from scratch just start there.</p>
@@ -28,7 +28,7 @@ author:
 <li>Swift 3.1 +</li>
 </ul>
 <p>Here's what the project will look like when we're done.</p>
-<p>[caption id="attachment_606" align="aligncenter" width="270"]<a href="https://www.joshqn.com/wp-content/uploads/2017/09/giphy.gif"><img class="wp-image-606 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="UIScrollView Parallax Effect" width="270" height="480" /></a> UIScrollView Parallax Effect[/caption]</p>
+<p><a href="https://www.joshqn.com/wp-content/uploads/2017/09/giphy.gif"><img class="wp-image-606 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="UIScrollView Parallax Effect" width="270" height="480" /></a></p>
 <p>Now that you've hopefully either downloaded the project or built it yourself lets get started!</p>
 <h3>Adding NSLayoutConstraint Variables</h3>
 <p>The first thing we need to do is create two variables. The variables will be used to animate our header and paragraph text on the x-axis. Add these lines of code inside of the PageView class.</p>
@@ -38,7 +38,7 @@ private var paragraphCenterXAnchor = NSLayoutConstraint()</pre>
 <pre class="lang:swift decode:true " title="Setting and activating our centerXAnchor constraints">// Added these two lines to get a reference to the UI items centerXAnchor constraints
 headerCenterXAnchor = headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor)
 paragraphCenterXAnchor = paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-    
+
 // Replaced the old constraints with the variable names here to be activated when setup is called
 NSLayoutConstraint.activate([
   headerCenterXAnchor,
@@ -83,9 +83,9 @@ let constantForViewThree = 395.0 * (CGFloat(2) - 1.0) // 395.0</pre>
   let pageWidth = scrollView.bounds.width
   let pageFraction = scrollView.contentOffset.x/pageWidth
   let constantFraction = pageFraction
-    
+
   pageControl.currentPage = Int((round(pageFraction)))
-    
+
   for (index, view) in views.enumerated() {
     guard let view = view as? PageView else { return }
     let constant = pageWidth * (CGFloat(index) - constantFraction)
@@ -104,7 +104,7 @@ let constantForViewThree = 395.0 * (CGFloat(2) - 1.0) // 395.0</pre>
   headerCenterXAnchor.isActive = false
   headerCenterXAnchor = self.headerTextField.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
   headerCenterXAnchor.isActive = true
-    
+
   paragraphCenterXAnchor.isActive = false
   paragraphCenterXAnchor = self.paragraphTextView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: constant)
   paragraphCenterXAnchor.isActive = true

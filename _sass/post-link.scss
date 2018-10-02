@@ -1,0 +1,13 @@
+.post-link {
+  color: rgb(0,0,0);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+    color: rgba(0,0,0,0.5);
+  }
+
+  &:visited {
+    color: gray;
+  }
+}

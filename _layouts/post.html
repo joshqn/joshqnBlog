@@ -2,6 +2,9 @@
 layout: default
 ---
 
-<h2>{{page.title}}</h2>
+<h2 class="page-title">{{page.title}}</h2>
+<h4>{{page.date | date: "%B %-d, %Y"}}</h4>
+
+<hr class="title-break">
 
 {{ content }}

@@ -1,0 +1,13 @@
+.pagination_buttons {
+    color: rgb(0,122,255);
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    text-decoration: none;
+    &:visited {
+      color: rgb(0,122,255);
+    }
+    &:hover {
+      color: black;
+      text-decoration: none;
+    }
+}

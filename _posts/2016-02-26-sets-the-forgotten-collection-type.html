@@ -12,28 +12,28 @@ categories:
 - Swift
 tags: []
 meta: {}
-author: 
+author:
 ---
 <p>How have I been programming for almost two years and never explored the power of sets? It seems that sets are perhaps the forgotten child of data collection or I'm just not the developer I thought I was? Either way, I was recently reading the <a href="http://www.raywenderlich.com/store/swift-apprentice">Swift Apprentice</a> made by the amazing team over on <a href="http://www.raywenderlich.com/">raywenderlich.com</a> and realized I'd been missing a piece of the puzzle. Today I'll get into what I learned about sets and a few practical uses for them that I've found.</p>
 <p>We can start by defining sets as a <strong>collection of distinct values of the same type and with no defined order</strong>. In layman's terms you'll have a collection just like the other collection types but with no duplicate values and they're not ordered in any way. You'll also see that sets have some powerful features when comparing two set collections. First we'll start by declaring and initializing a set.</p>
-<p>https://gist.github.com/anonymous/44f027fd4e90e2b9bb48</p>
+{% gist 44f027fd4e90e2b9bb48 %}
 <p>The good thing about the syntax is it's very clear when you've just made a set.</p>
 <p>If you're like me you probably just wanna know <strong>why</strong> should you use a set. Sets have some great built-in features that may fit your problem just perfectly.</p>
 <p>Lets say you're building an app that allows party host to make a list of things they'd like guest to bring.</p>
-<p>https://gist.github.com/anonymous/b8e38d6c73946cd544fd</p>
+{% gist b8e38d6c73946cd544fd %}
 <p>When a guest says they can bring a certain item you simply check if it's still on the list and remove it.</p>
-<p>https://gist.github.com/anonymous/fb8908a792d7c2e1c517</p>
+{% gist fb8908a792d7c2e1c517 %}
 <p>You could shorten that down to a single line of code by using the subtract method which removes values that also appear in the second set.</p>
-<p>https://gist.github.com/anonymous/96ab6040b5bef52857df</p>
+{% gist 96ab6040b5bef52857df %}
 <p>The above code is a great example of handy methods you can use with sets. I'll show you a few more.</p>
 <p>For the next example lets say you and your co-host are making a list of friends to invite to the party and for some unknown reason you're not together making these list. You could simply check each others list and remove the duplicates but that defeats the point of technology. Instead your handy set list methods can take care of that. The union operation will simply make a new set from the combination of the ones provided. Remember, sets only contain <strong>Unique</strong> values meaning that no duplicates will be in the new set if there are any.</p>
-<p>https://gist.github.com/anonymous/891917a9a01aa5cb3996</p>
+{% gist 891917a9a01aa5cb3996 %}
 <p>Here you've got a new list of friends you both helped make and no duplicates! Set list are magic I know!</p>
 <p>Alternatively, you could say only friends you both agree on can show up to the party and in that case set list have you covered as well. We'll use the intersect operation to test both sets and create a new one that only has the values both sets have in common.</p>
-<p>https://gist.github.com/anonymous/ba13ea51862b434b75f3</p>
+{% gist ba13ea51862b434b75f3 %}
 <p>Finally you and your co-host have to pick a time for the party. You each decide the best way to decide is to put down the times you are busy and then pick from the times you both are free. One of Sets powerful operations is exclusiveOr. This method looks at two sets and takes the values that are only contained in one not both.</p>
-<p>https://gist.github.com/anonymous/6f0c379d58b64f2b7e10</p>
+{% gist 6f0c379d58b64f2b7e10 %}
 <p>Those are the main highlights of what you'll get with sets. They're powerful and when you want the free functionality of filtering and removing duplicates they're perfect. To help you work it into your current work flow you should know it's easy to convert a set into an array.</p>
-<p>https://gist.github.com/anonymous/f56a9b5f60c72b661477</p>
+{% gist f56a9b5f60c72b661477 %}
 <p>You can save a lot of time by simply using sets and as you can see they're easy to convert back into a friendly array. Honestly, I almost always use the sort function to get an array back. It's just my preferred way of storing data but you are free to do either now!</p>
 <p>Thanks for reading! Make sure to use sets in playground and checkout all their cool functionality. If you feel like you got something out of reading this please comment and let me know! I really enjoy knowing I provided some benefit to my readers and I hope you'll share it so others can too.</p>

@@ -15,34 +15,38 @@ categories:
 - Swift
 tags: []
 meta: {}
-author: 
+author:
 ---
 <p>Making network requests in today's world is a requirement to be successful in the App Store. You might be familiar with the Apple API <a href="https://developer.apple.com/reference/foundation/nsurlsession?language=objc">NSUrlSession</a> or the Swift version <a href="https://developer.apple.com/reference/foundation/urlsession">UrlSession</a> to make those requests. They get the job done but other libraries have boldly come forward to make the task easier such as <a href="https://github.com/Alamofire/Alamofire">Alamofire</a>. I'll be using Alamofire to show you how to make a request and validate that we got the response we wanted.</p>
 <p>If you haven't been following along you can start <a href="http://www.joshqn.com/creating-a-rails-api/">here</a> where I show you how to make a Rails API from scratch. Alternatively, you can just download the Rails API from the Github link I have below <strong>Downloads</strong>.</p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Downloads[/x_custom_headline]</p>
+
+<h3>Downloads</h3>
+
 <p>If you're gonna follow along with this project you'll need a few things.</p>
 <ul>
 <li><a href="https://github.com/BlogExamples/dogPark-api/tree/SwiftRailsAPI">Dogpark Rails API on Github</a></li>
 <li><a href="https://github.com/BlogExamples/SwiftDogParkAlamofire/tree/StartingRepo">Starting Swift Project on Github</a></li>
 </ul>
 <p>When you download and run the Swift project it should run without any errors if you're using Xcode 8.2. The Swift simulator should be a blank UITableView.</p>
-<p>[caption id="attachment_412" align="aligncenter" width="267"]<a href="http://www.joshqn.com/wp-content/uploads/2017/05/1_Screen_Shot_22-05-17.png"><img class="wp-image-412 size-medium" src="{{ site.baseurl }}/assets/1_Screen_Shot_22-05-17-267x300.png" alt="Blank UITableView" width="267" height="300" /></a> Blank UITableView[/caption]</p>
+<a href="{{ site.baseurl }}/assets/1_Screen_Shot_22-05-17-267x300.png"><img class="wp-image-412 size-medium" src="{{ site.baseurl }}/assets/1_Screen_Shot_22-05-17-267x300.png" alt="Blank UITableView" width="267" height="300" /></a>
 <p>The Rails API should also start right out of the box. Go navigate through the terminal and seed the project before running it to make sure there will be data to display for later.</p>
-<p>[x_code]bin/rails db:seed[/x_code]</p>
+<pre>bin/rails db:seed</pre>
 <p>This will populate the database. You can then run the server if you'd like.</p>
-<p>[x_code]bin/rails s[/x_code]</p>
+<pre>bin/rails s</pre>
 <p>If everything compiles correctly then you're set so keep following along!</p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Installing Alamofire[/x_custom_headline]</p>
+<h3>Installing Alamofire</h3>
 <p>The first thing we need to do is install the Alamofire networking library using cocoaPods. If you're unfamiliar with what that is then you can learn about it on their website <a href="https://cocoapods.org/">cocoapods.org</a>.</p>
-<p>[x_alert heading="Note" type="info"]The following instructions will assume you have cocoaPods installed on your computer.[/x_alert]</p>
+
+<p><strong>The following instructions will assume you have cocoaPods installed on your computer.</strong></p>
+
 <p>To install the library you'll need to use the terminal and go to the root directory of the Swift project. Once inside the project type this into the terminal.</p>
-<p>[x_code]pod install[/x_code]</p>
+<pre>pod install</pre>
 <p>Hit enter. Your terminal should look like this when it's done running.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/2_Screen_Shot_22-05-17.png"><img class="aligncenter size-large wp-image-413" src="{{ site.baseurl }}/assets/2_Screen_Shot_22-05-17-1024x198.png" alt="" width="1024" height="198" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2_Screen_Shot_22-05-17-1024x198.png"><img class="aligncenter size-large wp-image-413" src="{{ site.baseurl }}/assets/2_Screen_Shot_22-05-17-1024x198.png" alt="" width="1024" height="198" /></a></p>
 <p>To continue along we'll follow the instructions in the terminal and close our current project then open the .xcworkspace project that was just created for us. Your folder structure should look like this. You'll see both projects but the one we want to use now is the .xcworkspace project.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/3_Screen_Shot_22-05-17.png"><img class="aligncenter size-full wp-image-414" src="{{ site.baseurl }}/assets/3_Screen_Shot_22-05-17.png" alt="" width="414" height="228" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/3_Screen_Shot_22-05-17.png"><img class="aligncenter size-full wp-image-414" src="{{ site.baseurl }}/assets/3_Screen_Shot_22-05-17.png" alt="" width="414" height="228" /></a></p>
 <p>Go ahead and run the project to make sure it compiles and looks the same as it did before. You shouldn't have any issues. Once you've done that close the simulator and open up the <span style="color: #ef5138;">DogPark.swift</span> file so we can pick up there with constructing the model for the dog parks.</p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Creating the Dog Park Model[/x_custom_headline]</p>
+<h3>Creating the Dog Park Model</h3>
 <p>Our <span style="color: #ef5138;">DogPark.swift</span> file right now is pretty plain as it stands. We'll be using a <em>struct</em> to model the dog park objects since we don't need inheritance and we get value semantics this way. I'll be giving my model the responsibility of using JSON to initialize its variables. Since JSON is error prone we'll create a failable initializer to handle any cases when we can't find the data we need to create the DogPark object.</p>
 <pre class="lang:swift decode:true">init?(json: [String:Any]) {
     guard let name = json["name"] as? String else {
@@ -58,7 +62,7 @@ enum SerializationError: Error {
 
 struct DogPark {
   var name: String
-  
+
   // [2]
   init(json: [String: Any]) throws {
     guard let name = json["name"] as? String else {
@@ -76,32 +80,32 @@ struct DogPark {
 <p>I prefer using Error types over nil when it makes sense because it gives me better info about errors in my code. Either will get the job done so it's purely up to you.</p>
 <p>That'll do it for our <span style="color: #ef5138;">DogPark.swift</span> file. All we need to do is hand our DogPark struct a piece of JSON to create new instances of a DogPark and it'll safely handle the rest. We'll next look at how to use Alamofire to grab data from our API.</p>
 <p>Here's what my file looks like.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/4_Screen_Shot_22-05-17.png"><img class="aligncenter size-full wp-image-415" src="{{ site.baseurl }}/assets/4_Screen_Shot_22-05-17.png" alt="" width="786" height="454" /></a></p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Using Alamofire[/x_custom_headline]</p>
+<p><a href="{{ site.baseurl }}/assets/4_Screen_Shot_22-05-17.png"><img class="aligncenter size-full wp-image-415" src="{{ site.baseurl }}/assets/4_Screen_Shot_22-05-17.png" alt="" width="786" height="454" /></a></p>
+<h3>Using Alamofire</h3>
 <p>Open your <span style="color: #ef5138;">Search.swift</span> file and below the <strong>import Foundation </strong>statement, add <strong>import Alamofire </strong>so that we have access to it. Build your project by pressing ⌘ + B and if you had any errors they should disappear.</p>
-<p>[x_alert heading="Note" type="info"]If this didn't work you should check that you're working inside the .xcworkspace project and not the original project.[/x_alert]</p>
-<p>[x_custom_headline type="center" level="h4" looks_like="h4" accent="true"]Creating our Get Function[/x_custom_headline]</p>
+<p><strong>If this didn't work you should check that you're working inside the .xcworkspace project and not the original project.</strong></p>
+<h3>Creating our Get Function</h3>
 <p>Inside our search class, we need a single function that will get all the instances of a dog park from our Rails API and return them. To begin I'll start by creating a static function called requestAllDogParks with no parameters.</p>
 <pre class="lang:swift decode:true ">class Search {
-  
+
   static func requestAllDogParks() {
     // code
   }
-  
+
 }</pre>
 <p>That's the function we'll call when we want to make a request to our API. Now we need to utilize Alamofire to actually contact the API and request some results. Luckily we've got a handy static function on Alamofire called request that will do just that. Inside our function type in the following code.</p>
-<p>[x_code]Alamofire.request(" ", method: .get, headers: ["":""])[/x_code]</p>
+<pre>Alamofire.request(" ", method: .get, headers: ["":""])</pre>
 <p>This is the basic layout for our request. The first parameter is the URL endpoint we want to handle our request. The method argument .<strong>get</strong> is used to indicate the type of HTTP method. Lastly, we have a headers argument that's a dictionary <em>(we'll be using it to pass our authentication token</em> later)<em>.</em> When you type that in you'll get a warning that says <strong><span style="color: #000000;">Result of call is unused, but produces 'DataRequest' </span></strong><span style="color: #000000;">meaning that we're not doing anything with the data we expect back. Type in the following. </span></p>
 <pre class="lang:swift decode:true">Alamofire.request(" ", method: .get, headers: ["":""])
       .validate(statusCode: 200..&lt;300) // Validates that we got valid response from the server
       .responseJSON() { response in // Here is the response we received back
-        
+
       }</pre>
 <p>To handle the response we chained on two methods to our request. The <strong>.validate </strong>is called before we handle the response to verify the request was successfully completed by the server. If the statusCode isn't between 200 and 300 then an error is generated. The second method <strong>.responseJSON </strong>validates that the response we received back is sent in JSON format and if not then an error is generated. Alamofire makes it easy to avoid common problems with methods like these. Next, we'll add the URL and create our headers dictionary.</p>
 <pre class="lang:swift decode:true">let headers = [
       "Authorization":"Token token=5f93476d86b171df78e093b222420bd7",
       ]
-    
+
     Alamofire.request("http://localhost:3000/api/v1/dog_parks", method: .get, headers: headers)
       .validate(statusCode: 200..&lt;300)
       .responseJSON() { response in
@@ -109,14 +113,14 @@ struct DogPark {
       }</pre>
 <p>That'll do it. We can now make our request! Just remember that your authentication token is probably different than mine so you'll need to find that and use it instead. If you need help generating the token or finding it just visit my post <a href="http://www.joshqn.com/rails-api-token-authentication/">Rails Token Authentication</a> and you'll find instructions on how to do that.</p>
 <p>The last thing we need to do is call <strong>.requestAllDogParks()</strong> at the bottom of ViewDidLoad inside of <span style="color: #ef5138;">DogParkViewController.swift</span>. Placing it in there will make sure it's called every time we run the app.</p>
-<p>[x_code]Search.requestAllDogParks()[/x_code]</p>
+<pre>Search.requestAllDogParks()</pre>
 <p>Run the app! Wait... Bam! Error! You should see something along the lines of "<strong>App Transport Security has blocked a cleartext HTTP..." </strong>This means we're making a request that isn't secure and Apple guards against that. This makes sense but since we don't use encryption for this we'll be skirting this protective measure from Apple for testing purposes.</p>
 <p>Go into your info.plist file. We need to add something very minor so that our request will be allowed through. Right click inside the plist and click <strong>Add Row</strong>. On the new row start typing "<strong>App Transport Security Settings</strong>" and it should autofill before you finish. Expand that new row and then click <strong>Add Row</strong> again and you should see a dropdown of options for the row and pick "<strong>Allow Arbitrary Loads</strong>" and change the value to <strong>YES</strong>. If you followed that then your new addition to info.plist should look like mine.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/5_Screen_Shot_23-05-17.png"><img class="aligncenter size-full wp-image-416" src="{{ site.baseurl }}/assets/5_Screen_Shot_23-05-17.png" alt="" width="732" height="72" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/5_Screen_Shot_23-05-17.png"><img class="aligncenter size-full wp-image-416" src="{{ site.baseurl }}/assets/5_Screen_Shot_23-05-17.png" alt="" width="732" height="72" /></a></p>
 <p>&nbsp;</p>
-<p>[x_alert heading="Note" type="info"]Remember to start your Rails API by using the "bin/rails s" command in the terminal[/x_alert]</p>
+<p>Remember to start your Rails API by using the "bin/rails s" command in the terminal</p>
 <p>Run the app again and you should have some nicer console output this time. If you seeded the database then your Xcode console should look like this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/6_Screen_Shot_23-05-17.png"><img class="aligncenter size-full wp-image-417" src="{{ site.baseurl }}/assets/6_Screen_Shot_23-05-17.png" alt="" width="488" height="300" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/6_Screen_Shot_23-05-17.png"><img class="aligncenter size-full wp-image-417" src="{{ site.baseurl }}/assets/6_Screen_Shot_23-05-17.png" alt="" width="488" height="300" /></a></p>
 <p>We've successfully contacted the database and gotten back the results we wanted. We need to figure out how to turn those into objects for our app. That comes next!</p>
 <p>We can make one more optional refactor to our request method. The default HTTP method is <em>GET</em> when we make a request using Alamofire so we can remove that. Inside the <strong>.validate</strong> method, we added an argument to only accept status codes between 200 and 300 but by default that's what it uses.</p>
 <pre class="lang:swift decode:true">Alamofire.request("http://localhost:3000/api/v1/dog_parks", headers: headers) // GET is the default HTTP method
@@ -125,35 +129,35 @@ struct DogPark {
     print(response)
   }</pre>
 <p>If you refactor and run your code you should get the same result. The default behavior can really shorten our code but it's always nice to know how to change the defaults. Let's move on.</p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Handling Our Data[/x_custom_headline]</p>
+<h3>Handling Our Data</h3>
 <p>To complete the <span style="color: #ef5138;">Search.swift</span> file we need to...</p>
 <ol>
 <li>Check for Errors in the Response.</li>
 <li>Parse the Data to initialize DogPark instances.</li>
 <li>Hand over the results to our view.</li>
 </ol>
-<p>[x_custom_headline type="center" level="h4" looks_like="h4" accent="true"]Checking for Errors[/x_custom_headline]</p>
+<h3>Checking for Errors</h3>
 <p>Inside of our <strong>.responseJSON()</strong> closure we get a response but that doesn't mean that it contains the information we want. To check for any errors you use the dot operator to first get the <em>result</em> and then the <em>error</em>. The error is an optional so if it's nil we know there weren't any issues and we can assume our HTTP request was successful. You can see I used an <strong>if-else</strong> statement to check for the possibility of an error.</p>
 <p>After checking for errors I use an <strong>if-let</strong> statement to check the <em>response.result.value</em> for nil and then assign it to <em>values</em> if it's not nil. It's just another security measure to make sure I'll be parsing valid values and handing them to my DogPark initializer later.</p>
 <pre class="theme:xcode toolbar:1 tab-size:2 lang:swift decode:true">Alamofire.request("http://localhost:3000/api/v1/dog_parks", headers: headers) // GET is the default HTTP method
     .validate() // Default statusCode validation is 200..&lt;300
     .responseJSON() { response in
-        
+
       // *** Error Check Code ***
       if (response.result.error == nil) {
         debugPrint("HTTP Response Body: \(response.data)")
         if let values = response.result.value {
           // Use values to initialize DogPark instances
         }
-          
+
       }
       else {
         debugPrint("HTTP Request failed: \(response.result.error)")
       }
-      // *** End of If-Else statement *** 
+      // *** End of If-Else statement ***
     }</pre>
 <p>The code is inside of the <strong>.responseJSON</strong> closure. If our request fails for any reason now it'll be printed to the console with the prefix "<strong>HTTP Request failed:</strong> " and a description of the error.</p>
-<p>[x_custom_headline type="center" level="h4" looks_like="h4" accent="true"]Parse the Data[/x_custom_headline]</p>
+<h4>Parse the Data</h4>
 <p>Before we start parsing the data I think we need a place to hold the results when we're done. To hold the final results we'll add a variable at the top called dogParks that is an array of DogPark instances and initialize it as an empty array.</p>
 <pre class="lang:swift decode:true">static func requestAllDogParks() {
     var dogParks: [DogPark] = [] // Add this code to your function
@@ -173,15 +177,15 @@ if (response.result.error == nil) {
 <pre class="lang:swift decode:true">// Takes in the HTTP response data and returns a DogPark Array
   static func parse(values: Any) -&gt; [DogPark] {
     var dogParks: [DogPark] = []
-    
+
     // Attempting to cast the values property into an Array of Any
     guard let values = values as? [Any] else { return dogParks }
-    
+
     // Evaluate each value from the values Any Array
     for value in values {
       //Cast the value from the values Array to a Dictionary
       if let resultDict = value as? [String: Any] {
-        
+
         // Attempt to initialize an instance of DogPark with the dictionary
         do {
           let dogPark = try DogPark(json: resultDict)
@@ -190,20 +194,20 @@ if (response.result.error == nil) {
         } catch {
           print("ERROR: \(error)")
         }
-        
+
       }
     }
-    
+
     // Returns an instance of DogPark Array
     return dogParks
   }</pre>
 <p>When you read through the code you'll see it's all just meant to drill down into the data to grab the pieces of JSON we need to initialize DogPark instances. First, the data is cast to an array of Any and then to individual values that are dictionaries. This process will vary depending on what the root of the JSON is but our API gives us an array with dictionary values so that's what we use.</p>
 <p>To initialize an instance of DogPark you'll notice we use a do-catch statement because we made the initializer a throwing initializer. If it works we go about our normal business and if not we can handle the problem inside our catch statement.</p>
-<p>[x_custom_headline type="center" level="h4" looks_like="h4" accent="true"]Using the Results in our View[/x_custom_headline]</p>
+<h4>Using the Results in our View</h4>
 <p>This is the last ingredient we need to add. We've got an array of DogPark instances but how do we give those to our view to show? I believe the best way to do this would be to use a callback to the requestAllDogParks function. We'll add a typealias to represent the callback at the top just below the import statements.</p>
 <pre class="lang:swift decode:true">typealias SearchComplete = (_ isSuccessful: Bool, _ dogParks: [DogPark]) -&gt; Void</pre>
 <p>The typealias will contain a property to indicate if we successfully returned DogPark responses or alternatively to indicate that it failed. The second property will be the array of DogPark instances. Next, we'll edit the requestAllDogParks function signature by adding the property to enable a call back like this.</p>
-<p>[x_code]static func requestAllDogParks(completion: @escaping SearchComplete )[/x_code]</p>
+<pre>static func requestAllDogParks(completion: @escaping SearchComplete )</pre>
 <p>The part you might find interesting is the <strong>@escaping</strong> prefix before the closure. This is required because our closure might need to be around after requestAllDogParks has finished running. You can find a more thorough explanation in Apples documentation <a href="https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Closures.html#//apple_ref/doc/uid/TP40014097-CH11-ID546">here</a>. The last thing we need to do is call the completion when we've got a completed Array of dogParks after the parse function or when it fails.</p>
 <pre class="lang:swift decode:true">if (response.result.error == nil) {
   debugPrint("HTTP Response Body: \(response.data)")
@@ -217,9 +221,9 @@ else {
   completion(false, dogParks) // *** The request failed ***
 }</pre>
 <p>That's all we need to do inside of <span style="color: #ef5138;">Search.swift<span style="color: #000000;">. Your file should look like this.</span></span></p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/7_Screen_Shot_23-05-17.png"><img class="aligncenter size-large wp-image-418" src="{{ site.baseurl }}/assets/7_Screen_Shot_23-05-17-808x1024.png" alt="" width="808" height="1024" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/7_Screen_Shot_23-05-17-808x1024.png"><img class="aligncenter size-large wp-image-418" src="{{ site.baseurl }}/assets/7_Screen_Shot_23-05-17-808x1024.png" alt="" width="808" height="1024" /></a></p>
 <p><span style="color: #ef5138;"><span style="color: #000000;">All we have left to do is jump into <span style="color: #ef5138;">DogParkViewController.swift</span> and update the function call. </span></span></p>
-<p>[x_custom_headline type="center" level="h3" looks_like="h3" accent="true"]Rendering Our Results[/x_custom_headline]</p>
+<h3>Rendering Our Results</h3>
 <p>Inside of your <span style="color: #ef5138;">DogParkViewController.swift</span> file, you should be getting an error. That's because we added a parameter to requestAllDogParks() and haven't updated it yet. We'll add on a closure to handle the new parameter since the completion variable is a function.</p>
 <pre class="lang:swift decode:true">Search.requestAllDogParks() { isSuccessful, dogParks in
   // Check isSuccessful in here
@@ -227,15 +231,15 @@ else {
 <p>The completion parameter took a Bool and array of DogPark so here we've assigned those variables to <em>isSuccessful</em> and <em>dogparks</em>. The last thing we wanna do is check the isSuccessful parameter for true or false and then assign our local dogParks array to the result dogParks from our requestAllDogParks function.</p>
 <pre class="lang:swift decode:true">Search.requestAllDogParks() { isSuccessful, dogParks in
   if isSuccessful {
-    self.dogParks = dogParks 
+    self.dogParks = dogParks
   } else {
     // Let the user know the request failed
   }
 }</pre>
 <p>Because of the isSuccessful parameter, we have the chance to let the user know that the request failed. In applications, it's important to let users know when something didn't work. Ideally, we'd give them a specific reason why and tell them how to fix it possibly or if they even can. We then assign our local instance of dogParks to the result dogParks and our viewController handles the rest. Run the code and you should see these results in the simulator.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/9_Screen_Shot_23-05-17.png"><img class="aligncenter wp-image-420 size-medium" src="{{ site.baseurl }}/assets/9_Screen_Shot_23-05-17-300x175.png" alt="" width="300" height="175" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/9_Screen_Shot_23-05-17-300x175.png"><img class="aligncenter wp-image-420 size-medium" src="{{ site.baseurl }}/assets/9_Screen_Shot_23-05-17-300x175.png" alt="" width="300" height="175" /></a></p>
 <p>You <span style="color: #ef5138;">DogParkViewController.swift</span> file should look like this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/8_Screen_Shot_23-05-17.png"><img class="aligncenter size-large wp-image-419" src="{{ site.baseurl }}/assets/8_Screen_Shot_23-05-17-876x1024.png" alt="" width="876" height="1024" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/8_Screen_Shot_23-05-17-876x1024.png"><img class="aligncenter size-large wp-image-419" src="{{ site.baseurl }}/assets/8_Screen_Shot_23-05-17-876x1024.png" alt="" width="876" height="1024" /></a></p>
 <p>That's it! I hope it all worked well for you and was easy to follow. If you have suggestions please leave a comment or reach out to me on twitter @josh_qn. I'm always trying to improve so let me know if anything was confusing or not clear.</p>
 <p>If you'd like to see the final project you can find it <a href="https://github.com/BlogExamples/SwiftDogParkAlamofire/tree/finalRepo">here</a> at Github.</p>
 <p>Thanks again! Auf wiedersehen!</p>

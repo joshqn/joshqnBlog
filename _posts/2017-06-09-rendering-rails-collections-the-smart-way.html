@@ -14,11 +14,11 @@ tags:
 - Ruby
 - Ruby on Rails
 meta: {}
-author: 
+author:
 ---
 <p>This week I was working on a Rails application and stumbled across a really cool trick for rendering collections. As per the usual, it involves a little Rails magic as you'll see. This trick will clean up a lot of your views and adheres to our coveted DRY convention.</p>
 <p>Imagine you're working on an application and you've got a collection of users you'd like to display. You might so something similar to this (Rails generated this when I used the <em>generate scaffold</em> command) to display all of your users.</p>
-<p><a href="https://www.joshqn.com/wp-content/uploads/2017/06/1_Screen_Shot_09-06-17.png"><img class="aligncenter size-large wp-image-490" src="{{ site.baseurl }}/assets/1_Screen_Shot_09-06-17-1024x621.png" alt="" width="1024" height="621" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/1_Screen_Shot_09-06-17-1024x621.png"><img class="aligncenter size-large wp-image-490" src="{{ site.baseurl }}/assets/1_Screen_Shot_09-06-17-1024x621.png" alt="" width="1024" height="621" /></a></p>
 <p>This will work but I believe we can do better. To clean up the code we'll create a partial and then simply render it. This is where the magic happens.</p>
 <h2>Creating Your Partial</h2>
 <p>To create the magic we need to keep in mind a few things when we create the partial.</p>
@@ -38,7 +38,7 @@ author:
   &lt;%= render @users %&gt;
 &lt;/ol&gt;</pre>
 <p>A lot less code huh? It's a little bit of Rail's voodoo I admit but doesn't that look nicer?  You can even use this method for heterogeneous collections but I won't be covering that today. After adding that code and a little styling my view looks like this.</p>
-<p><a href="https://www.joshqn.com/wp-content/uploads/2017/06/2_Screen_Shot_09-06-17.png"><img class="aligncenter size-large wp-image-491" src="{{ site.baseurl }}/assets/2_Screen_Shot_09-06-17-1024x458.png" alt="" width="1024" height="458" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2_Screen_Shot_09-06-17-1024x458.png"><img class="aligncenter size-large wp-image-491" src="{{ site.baseurl }}/assets/2_Screen_Shot_09-06-17-1024x458.png" alt="" width="1024" height="458" /></a></p>
 <p>You can download the code on GitHub <a href="https://github.com/BlogExamples/renderingRailsCollections">here</a>.</p>
 <p>That wraps it up. If you enjoyed this post please share it with somebody else you think could benefit. Also, if you didn't find this helpful or think it could be improved let me know! To reach me just leave a comment or shout out to me on Twitter @josh_qn.</p>
 <h4>Resources</h4>

@@ -20,14 +20,14 @@ tags:
 meta: {}
 author:
 ---
-<p>Today I wanna show you how to implement a Paging Scroll View programmatically using some cool AutoLayout APIs. You might be asking "Why do this programmatically?". Truth is, you could do a mix of storyboard or completely in storyboard and get the same result.The reason is that in my next tutorial <a href="https://www.joshqn.com/adding-a-parallax-effect-to-a-uiscrollview-using-nslayoutanchor/" target="_blank" rel="noopener">Adding a Parallax Effect to a UIScrollView using NSLayoutAnchor</a> I create a parallax effect with the header and paragraph text that is easier when done all programmatically.  It's also surprisingly simple! Let's get going!</p>
+<p>Today I wanna show you how to implement a Paging Scroll View programmatically using some cool AutoLayout APIs. You might be asking "Why do this programmatically?". Truth is, you could do a mix of storyboard or completely in storyboard and get the same result.The reason is that in my next tutorial <a href="{{ site.baseurl }}/adding-a-parallax-effect-to-a-uiscrollview-using-nslayoutanchor/" target="_blank" rel="noopener">Adding a Parallax Effect to a UIScrollView using NSLayoutAnchor</a> I create a parallax effect with the header and paragraph text that is easier when done all programmatically.  It's also surprisingly simple! Let's get going!</p>
 <p>Before we get started you should grab the starting project <a href="https://github.com/BlogExamples/PagingScrollView/tree/StarterRepo">here on GitHub</a>. You'll also want to take note of the versions I've used to create this project.</p>
 <ul>
 <li>Xcode 8.3.3</li>
 <li>Swift 3.1</li>
 </ul>
 <p>If you have all those things then let's get started. This is what you'll have by the end of this post.</p>
-<p><a href="https://www.joshqn.com/wp-content/uploads/2017/07/giphy.gif"><img class="wp-image-591 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="Paging Scroll View Gif" width="270" height="480" /></a></p>
+<a href="{{ site.baseurl }}/assets/giphy.gif"><img class="wp-image-591 size-full" src="{{ site.baseurl }}/assets/giphy.gif" alt="Paging Scroll View Gif" width="270" height="480" /></a>
 <h3>Setup the ScrollView</h3>
 <p>This is where we need to start because this is where all the subviews will go. Open up the project and go into ViewController.swift and scroll down to the setup() method. You should see a comment stating where we'll be doing the setup. Just below the comment, we'll add the following code.</p>
 <pre class="lang:swift decode:true " title="ScrollView Setup">// [1]
@@ -46,7 +46,7 @@ NSLayoutConstraint.activate([
 </pre>
 <ol>
 <li>Here you can see some pretty self-explanatory changes to scrollView. The oddest piece has to do with <em>.translateAutoresizingMaskIntoConstraints </em>and that just tells our scrollView to assume nothing and let us tell it where to go and how to size itself.</li>
-<li>Here I add the scrollView to our ViewController view and use NSLayoutAnchor to perform some AutoLayout magic. If you're unfamiliar with how this works you should go check out my post on <a href="https://www.joshqn.com/getting-started-with-nslayoutanchor-swift-3-1/">Getting Started with NSLayoutAnchor</a> and then head back over.</li>
+<li>Here I add the scrollView to our ViewController view and use NSLayoutAnchor to perform some AutoLayout magic. If you're unfamiliar with how this works you should go check out my post on <a href="{{ site.baseurl }}/getting-started-with-nslayoutanchor-swift-3-1/">Getting Started with NSLayoutAnchor</a> and then head back over.</li>
 </ol>
 <p>If you run the simulator now you'll see a very unimpressive black screen. Let's keep going.</p>
 <h3>Setup the Stackview</h3>
@@ -81,7 +81,7 @@ views.forEach { (view) in
 <li>To add our views to the stackView we need to call <em>.addArrangedSubview </em>and add the view. If you use the vanilla <em>.addSubview </em>you won't get the desired result of the stackView arranging the views for us.</li>
 </ol>
 <p>Build and run the project. Colors! We finally have some scrolling going on. You might've noticed an issue. When we scroll it doesn't snap to one whole page when we quit.</p>
-<p><a href="https://www.joshqn.com/wp-content/uploads/2017/07/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM.png"><img class="aligncenter wp-image-586" src="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM-576x1024.png" alt="" width="270" height="480" /></a></p>
+<p><a href="{{ site.baseurl }}/wp-content/uploads/2017/07/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM.png"><img class="aligncenter wp-image-586" src="{{ site.baseurl }}/assets/Simulator-Screen-Shot-Jul-23-2017-8.19.34-PM-576x1024.png" alt="" width="270" height="480" /></a></p>
 <p>Luckily, this is a really easy fix. Go back up to where we set up the scrollView and add the following line of code.</p>
 <pre class="lang:swift decode:true" title="Enable Paging">scrollView.isPagingEnabled = true</pre>
 <p>Build and run the project again and the problem should be fixed. We've officially got some nice paging action. We're done with the main feature but it's not polished. To make it a better experience scrolling we should add margins between our views. We'll do that next.</p>

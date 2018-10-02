@@ -16,13 +16,13 @@ tags:
 - NSLayoutAnchor
 - Swift
 meta: {}
-author: 
+author:
 ---
 <p>Displaying views correctly on the screen can be one of the most frustrating parts of building apps. With the addition of more screen sizes, it's not getting any easier. Thankfully, Apple is also offering us more ways to work with auto layout. Here I'm gonna take an introductory look at the an API introduced in iOS 9, NSLayoutAnchor. I'll show how it improved the ideas from <a href="https://developer.apple.com/documentation/uikit/nslayoutconstraint">NSLayoutConstraints</a> and how to use <a href="https://developer.apple.com/documentation/uikit/nslayoutanchor">NSLayoutAnchor</a> in your app.</p>
-<p>[x_alert heading="Note the Following Versions Used to Create this Tutorial" type="danger"]</p>
+
 <ul>
 <li><strong>Xcode: 9.0</strong></li>
-<li><strong>Swift: 4.0</strong>[/x_alert]</li>
+<li><strong>Swift: 4.0</strong></li>
 </ul>
 <h3>Why NSLayoutAnchor?</h3>
 <p>Where do we begin? There seems like a dozen ways to layout things. You can use interface builder, stack views, visual format, and last but not least anchors. There's no one perfect way to use auto layout. If you're creating constraints in code you'll probably use either NSLayoutConstraints or NSLayoutAnchors. Here's what NSLayoutConstraint and NSLayoutAnchor look like side by side doing the same thing.</p>
@@ -51,7 +51,7 @@ myView.heightAnchor.constraint(equalToConstant: 100).isActive = true
 <li>These four lines of code do the same thing as all the above code.</li>
 </ol>
 <p>The code above can be broken into two parts of NSLayoutConstraints and NSLayoutAnchor. When you use them individually you'll get the following result from both.</p>
-<p>[caption id="attachment_617" align="aligncenter" width="169"]<a href="https://www.joshqn.com/wp-content/uploads/2017/06/TopConstrained.png"><img class="wp-image-617 size-medium" src="{{ site.baseurl }}/assets/TopConstrained-169x300.png" alt="UIViewController with a UIView constrained to the top." width="169" height="300" /></a> UIViewController with a UIView constrained to the top.[/caption]</p>
+<a href="{{ site.baseurl }}/assets/TopConstrained-169x300.png"><img class="wp-image-617 size-medium" src="{{ site.baseurl }}/assets/TopConstrained-169x300.png" alt="UIViewController with a UIView constrained to the top." width="169" height="300" /></a>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>There are two distinctions I'd like to make between using NSLayoutConstraint and NSLayoutAnchor. One is obvious and the other not so much until you do something wrong.</p>
@@ -104,13 +104,13 @@ myView.heightAnchor.constraint(equalToConstant: 100).isActive = true
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     let myView: UIView = UIView(frame: .zero)
     myView.backgroundColor = .red
     myView.translatesAutoresizingMaskIntoConstraints = false
     self.view.addSubview(myView)
     let safeArea = self.view.safeAreaLayoutGuide
-    
+
     myView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     myView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
     myView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
@@ -118,7 +118,7 @@ myView.heightAnchor.constraint(equalToConstant: 100).isActive = true
   }
 }</pre>
 <p>If your code looks like mine then press build and run the project.</p>
-<p>[caption id="attachment_617" align="aligncenter" width="169"]<a href="https://www.joshqn.com/wp-content/uploads/2017/06/TopConstrained.png"><img class="wp-image-617 size-medium" src="{{ site.baseurl }}/assets/TopConstrained-169x300.png" alt="Anchor myView to the top of the ViewController." width="169" height="300" /></a> Anchor myView to the top of the ViewController.[/caption]</p>
+<a href="{{ site.baseurl }}/assets/TopConstrained-169x300.png"><img class="wp-image-617 size-medium" src="{{ site.baseurl }}/assets/TopConstrained-169x300.png" alt="Anchor myView to the top of the ViewController." width="169" height="300" /></a>
 <p>&nbsp;</p>
 <p>It's a boring view I admit but you can now do so much more. I highly encourage reading the documentation to learn just what all you can do with NSLayoutAnchor.</p>
 <h4>Optimization</h4>
@@ -139,7 +139,7 @@ myView.heightAnchor.constraint(equalToConstant: 100).isActive = true
   myView.widthAnchor.constraint(equalToConstant: 100)
 ])</pre>
 <p>The code should look relatively similar to earlier. Since our superView has a <em>centerXAnchor</em> and <em>centerYAnchor</em> we just constrain myView to the superView anchors. The biggest difference is I'm setting both the width and height of this view. That's because I didn't anchor it to the superView edges so I must explicitly declare what those dimensions will be.</p>
-<p>[caption id="attachment_618" align="aligncenter" width="168"]<a href="https://www.joshqn.com/wp-content/uploads/2017/06/CenterConstrained.png"><img class="wp-image-618 size-medium" src="{{ site.baseurl }}/assets/CenterConstrained-168x300.png" alt="Center myView" width="168" height="300" /></a> Center myView[/caption]</p>
+<a href="{{ site.baseurl }}/assets/CenterConstrained-168x300.png"><img class="wp-image-618 size-medium" src="{{ site.baseurl }}/assets/CenterConstrained-168x300.png" alt="Center myView" width="168" height="300" /></a>
 <p>With that complete, we'll move onto placing myView on the bottom of the screen.</p>
 <h4>Anchoring to the Bottom</h4>
 <p>In this last example, we'll look at adding constants to the anchors. The basic layout of making the anchor will be the same but the method will be <em>constraint(equalTo: _, constant: _) </em>instead. Here's what it looks like.</p>
@@ -150,7 +150,7 @@ myView.heightAnchor.constraint(equalToConstant: 100).isActive = true
   myView.heightAnchor.constraint(equalToConstant: 100)
 ])</pre>
 <p>You might think that adding a -20 would push myView down or to the right but that's not the case. Since the origin(0,0) for the superView is the top left it actually brings myView up and looks like this.</p>
-<p>[caption id="attachment_619" align="aligncenter" width="169"]<a href="https://www.joshqn.com/wp-content/uploads/2017/06/BottomConstrained.png"><img class="wp-image-619 size-medium" src="{{ site.baseurl }}/assets/BottomConstrained-169x300.png" alt="Constrain myView to the bottom of the ViewController." width="169" height="300" /></a> Constrain myView to the bottom of the ViewController.[/caption]</p>
+<a href="{{ site.baseurl }}/assets/BottomConstrained-169x300.png"><img class="wp-image-619 size-medium" src="{{ site.baseurl }}/assets/BottomConstrained-169x300.png" alt="Constrain myView to the bottom of the ViewController." width="169" height="300" /></a>
 <p>Without that constant myView would sit on the bottom without a margin. You can find out for yourself by changing the constant to 0. If for some reason your view is still in the center remember to update the <em>activeConstraints </em>and that should fix your problem.</p>
 <p>To keep learning about NSLayoutAnchor I have another post about <a href="https://www.joshqn.com/animating-nslayoutanchor-constraints-and-the-pitfalls-involved/">Animating NSLayoutAnchor Constraints and the Pitfalls Involved</a>. Go take a look and leave a comment when you're done. :)</p>
 <p>I hope you found it helpful. If you did please share it with somebody you think could benefit. If you have any comments please leave one here or reach out to me on twitter @josh_qn.</p>

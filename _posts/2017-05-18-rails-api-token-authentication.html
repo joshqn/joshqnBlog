@@ -15,22 +15,22 @@ tags:
 - API
 - Ruby on Rails
 meta: {}
-author: 
+author:
 ---
 <p>In this post I'm going to be walking you through one way to add basic token authentication to your app. It's important because in the future you might decide you wanna throttle your API usage to users who might use it excessively and wreck your server. Plus it's easy to setup so why not?</p>
 <p>If you've been keeping up with the series and have your code from the previous post <a href="http://www.joshqn.com/rails-api-versioning/">Adding Rails Versioning</a> then you're in good shape. If you wanna follow along from the beginning just go to my first post on <a href="http://www.joshqn.com/creating-a-rails-api/">Creating a Rails API</a>. If you'd just like to start here then you can download the code from GitHub <a href="https://github.com/BlogExamples/dogPark-api/tree/BasicAPIVersioning">here</a>.</p>
 <h2>Generating API Tokens</h2>
 <p>You have a lot of options for where you might wanna keep the API tokens generated for users. For this API we'll create an ApiKey model that will take care of holding our tokens inside an attribute called access_token. To Generate the model we'll be using the handy rails generate command. To create the model and attribute we'll open the terminal, navigate to the project, and type this command in.</p>
-<p>[x_code]rails generate model api_key access_token[/x_code]</p>
+<pre>rails generate model api_key access_token</pre>
 <p>This will generate a few new files but the only one we care about is the <span style="color: #c52f24;">api_key.rb</span> file inside the models folder. Before we start adding anything to this file we first need to migrate our database to use our new generated model. To do that just type in the following into the terminal.</p>
-<p>[x_code]bin/rails db:migrate[/x_code]</p>
+<pre>bin/rails db:migrate</pre>
 <p>With that done we can now add the logic inside of <span style="color: #c52f24;">api_key.rb</span> to generate tokens when we create an instance api_key. Right now the file should look empty just like mine.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/1_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-372" src="{{ site.baseurl }}/assets/1_Screen_Shot_18-05-17.png" alt="" width="502" height="160" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/1_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-372" src="{{ site.baseurl }}/assets/1_Screen_Shot_18-05-17.png" alt="" width="502" height="160" /></a></p>
 <h3>Adding Logic to Our Model</h3>
 <p>Inside of the class we'll be adding a hook into the life cycle of our model. What that means is when we do something specific such as create, destroy, validate, or any other life cycle change we're gonna perform an action. In this instance, we wanna generate a token and add it as our access_token. Inside of your class add the code below.</p>
-<p>[x_code]before_create :generate_access_token[/x_code]</p>
+<pre>before_create :generate_access_token</pre>
 <p>The above code will make sure the method generate_access_token is run before the object is officially created. So we next need to add into our class the method that will be run. Add the following code below the line we just added.</p>
-<p>https://gist.github.com/joshqn/f34d677319d15779de8a221c57374b7d</p>
+{% gist f34d677319d15779de8a221c57374b7d %}
 <ol>
 <li>Declare a new method inside the ApiKey class called generate_access_token. You'll also notice above it the private keyword that will hide this method from anyone outside of the class.</li>
 <li>This is what you'd call a block in most languages. We'll be using it do a very similar fashion as we would a do...while loop.</li>
@@ -38,47 +38,47 @@ author:
 <li>Our block of code should end here if it adheres to the condition we tacked on after the while keyword. The method we're using "exists?" is going to look for any matching access_token and if there is one then the block will run again. This is to ensure that our API keys are all unique. It'll run until a unique access_token is generated and then end the block.</li>
 </ol>
 <p>If you followed all of that and added it to your file then your file should be looking like this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/2_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-373" src="{{ site.baseurl }}/assets/2_Screen_Shot_18-05-17.png" alt="" width="876" height="426" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/2_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-373" src="{{ site.baseurl }}/assets/2_Screen_Shot_18-05-17.png" alt="" width="876" height="426" /></a></p>
 <h3>Testing the New Model</h3>
 <p>We won't be adding any real test but if you'd like to see the model in action then we can do that easily. Inside of your terminal and still inside of the API, type in this.</p>
-<p>[x_code]bin/rails console[/x_code]</p>
+<pre>bin/rails console</pre>
 <p>This will present the rails console which will have access to our new model. In a single line we can create a new ApiKey instance and save it to our database. When we do that it'll display the attributes and you should see a longish hex value inside the access_token attribute. Type into the console the following.</p>
-<p>[x_code]ApiKey.create![/x_code]</p>
+<pre>ApiKey.create!</pre>
 <p>That will create and save a new ApiKey instance to our database. If everything went well then your terminal should look a lot like this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/3_Screen_Shot_18-05-17.png"><img class="aligncenter size-large wp-image-374" src="{{ site.baseurl }}/assets/3_Screen_Shot_18-05-17-1024x196.png" alt="" width="1024" height="196" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/3_Screen_Shot_18-05-17-1024x196.png"><img class="aligncenter size-large wp-image-374" src="{{ site.baseurl }}/assets/3_Screen_Shot_18-05-17-1024x196.png" alt="" width="1024" height="196" /></a></p>
 <p>Alright, we've created our model to generate tokens and we can save them. Next, we'll work on making sure our controller checks for an existing token before sending back JSON so that only users with a token can access our API.</p>
 <h2>Authenticating our Tokens</h2>
 <p>When we receive a request to our API they get routed to our controller which uses an action to execute some functionality. What we want is for our controller to verify a valid token was given to use before any action is performed. Luckily our controllers have a handy callback called <strong>before_action </strong>which does just that. So we'll create a function that'll check for a valid token and if it's valid we'll go along and if not we'll reject the request.</p>
 <p>Navigate through app &gt; controller &gt; api &gt; v1 to the <span style="color: #c52f24;">dog_parks_controller.rb</span> file where we'll be making these changes. Just below our class declaration "class DogParksController..." we'll add the following line of code.</p>
-<p>[x_code]before_action :restrict_access[/x_code]</p>
+<pre>before_action :restrict_access</pre>
 <p>This calls a method called :restrict_access before any actions are performed inside the controller. Problem is we don't have a method called restrict_access so we'll add that next. Below the private keyword, we'll declare the function restrict_access.</p>
-<p>https://gist.github.com/joshqn/b9e90a171297d65947733bb0c364e05d</p>
+{% gist b9e90a171297d65947733bb0c364e05d %}
 <p>&nbsp;</p>
 <ol>
 <li>This is a block that will return either true or false. It looks into the http headers for a key "Authorization" and a value "Token token=".</li>
 <li>We're verifying that the token value we acquire from the authenticate_or_request_with_http_token block exists inside our database. If it does then true will be returned.</li>
 </ol>
 <p>If you attempt to make a request to the API you will get an error, but it won't be because you don't have a token included in the headers. You'll get a "NoMethodError" because we forgot to include the module that contains the authenticate_or_request_with_http_token method. To fix that just add this below our class declaration.</p>
-<p>[x_code]include ActionController::HttpAuthentication::Token::ControllerMethods[/x_code]</p>
+<pre>include ActionController::HttpAuthentication::Token::ControllerMethods</pre>
 <p>That will fix the error. Make sure your <span style="color: #c52f24;">dog_parks_controller.rb</span> file looks like mine does now.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/4_Screen_Shot_18-05-17.png"><img class="aligncenter size-large wp-image-375" src="{{ site.baseurl }}/assets/4_Screen_Shot_18-05-17-566x1024.png" alt="" width="566" height="1024" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/4_Screen_Shot_18-05-17-566x1024.png"><img class="aligncenter size-large wp-image-375" src="{{ site.baseurl }}/assets/4_Screen_Shot_18-05-17-566x1024.png" alt="" width="566" height="1024" /></a></p>
 <p>If it does then you're in good shape. Next, let's test and see if our API is working correctly.</p>
 <h2>Testing Authentication</h2>
 <p>We've done all this work and now it's time to see if it worked. I think we should first make sure the request we send in without tokens is rejected.</p>
 <h3>Testing for Failure</h3>
 <p>This will be relatively simple. Like we've done in the past you'll need to start the rails server using <strong>bin/rails server </strong>then navigate to the URL that will process our request. You should get a 401 unauthorized message in the terminal and on the page you'll see this.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/5_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-376" src="{{ site.baseurl }}/assets/5_Screen_Shot_18-05-17.png" alt="" width="704" height="154" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/5_Screen_Shot_18-05-17.png"><img class="aligncenter size-full wp-image-376" src="{{ site.baseurl }}/assets/5_Screen_Shot_18-05-17.png" alt="" width="704" height="154" /></a></p>
 <p>Perfect. People can no longer just make a request to our API. That's what we expected. Next, let's use the access token we generated earlier and send it in a request to make sure our API works when we provide a token.</p>
 <h3>Testing Success</h3>
 <p>First, we need the token that was generated. If you didn't write that down it's fine. Just enter the rails console using <strong>bin/rails console </strong>and put in the following.</p>
-<p>[x_code]ApiKey.all[/x_code]</p>
+<pre>ApiKey.all</pre>
 <p>And you should receive back all the objects in the database. This will include the attributes as well so you should see the access_token associated with the object you made earlier.</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/6_Screen_Shot_18-05-17.png"><img class="aligncenter size-large wp-image-377" src="{{ site.baseurl }}/assets/6_Screen_Shot_18-05-17-1024x143.png" alt="" width="1024" height="143" /></a></p>
+<p><a href="{{ site.baseurl }}/assets/6_Screen_Shot_18-05-17-1024x143.png"><img class="aligncenter size-large wp-image-377" src="{{ site.baseurl }}/assets/6_Screen_Shot_18-05-17-1024x143.png" alt="" width="1024" height="143" /></a></p>
 <p>Your tokens will be different from mine and that's fine. It's just important you copy a token or write it down somewhere to use in our request. Now since we used an authentication method that uses the header we can't just put the token in the URL. We'll need to create it some other way.</p>
 <p>To create these request we'll be using the terminal. We can create the request using the cURL command. You can type into the terminal <strong>man curl </strong>to see the manual. Curl is by definition is a tool to transfer data from or to a server. The explanation for curl is outside of the scope for this tutorial but I'll show you how we'll use it to send a request to our API.</p>
 <p>Inside the terminal, I'll need you to type in the following on one line.</p>
-<p>[x_code]curl "http://localhost:3000/api/v1/dog_parks" -H "Authorization: Token token=[Your Token Here]"[/x_code]</p>
-<p><a href="http://www.joshqn.com/wp-content/uploads/2017/05/7_Screen_Shot_18-05-17.png"><img class="aligncenter size-large wp-image-378" src="{{ site.baseurl }}/assets/7_Screen_Shot_18-05-17-1024x106.png" alt="" width="1024" height="106" /></a></p>
+<pre>curl "http://localhost:3000/api/v1/dog_parks" -H "Authorization: Token token=[Your Token Here]"</pre>
+<p><a href="{{ site.baseurl }}/assets/7_Screen_Shot_18-05-17-1024x106.png"><img class="aligncenter size-large wp-image-378" src="{{ site.baseurl }}/assets/7_Screen_Shot_18-05-17-1024x106.png" alt="" width="1024" height="106" /></a></p>
 <p>If that's successful then you'll see all of the dog parks you have saved displayed inside of the terminal. Pretty awesome huh? You have a working authentication system now.</p>
 <p>I hope you found this tutorial helpful and thorough enough. If you have any questions please leave a comment or send me a tweet @josh_qn.</p>
 <p>You can grab the final project code at Github <a href="https://github.com/BlogExamples/dogPark-api/tree/BasicAuthentication">here</a>.</p>

@@ -61,7 +61,7 @@ jekyll-archives:
 google_analytics: TRACKING_ID
 
 disqus:
-  shortname: DISQUS_SHORTNAME
+  shortname: joshqn
 
 
 # Exclude from processing.

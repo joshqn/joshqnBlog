@@ -14,3 +14,11 @@ h2 {
 .title-break {
   margin-bottom: 16px;
 }
+
+@import
+  "pager",
+  "pagination-buttons",
+  "categories-list",
+  "post-link",
+  "page-title"
+;

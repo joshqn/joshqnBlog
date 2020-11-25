@@ -97,6 +97,3 @@ DEPENDENCIES
   minima
   open_uri_redirections
   tzinfo-data
-
-BUNDLED WITH
-   2.1.4
